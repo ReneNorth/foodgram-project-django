@@ -24,7 +24,8 @@ class Recipe(models.Model):
                                    verbose_name='Описание')
     cooking_time = models.SmallIntegerField(
         verbose_name='Время на приготовление в минутах')
-    # image = 
+    image = models.ImageField(
+        upload_to='recipes/', null=True, blank=True)
     # ingredients = 
     # tags = 
     # is_favorited

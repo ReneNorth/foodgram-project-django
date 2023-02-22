@@ -8,6 +8,7 @@ load_dotenv(dotenv_path=os.path.abspath(os.path.join(BASE_DIR.parent, f'{os.pard
 
 TEST_KEY = os.getenv('TEST_KEY')
 print(TEST_KEY, '<- test key is okay')
+print(BASE_DIR)
 SECRET_KEY = os.getenv('DJANGO_KEY')
 
 
@@ -25,12 +26,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_yasg',
+    'sorl.thumbnail',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
     'recipe.apps.RecipeConfig',
+    'ingredients.apps.IngredientsConfig',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +130,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# MEDIA
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
