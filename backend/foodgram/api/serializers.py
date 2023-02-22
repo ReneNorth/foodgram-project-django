@@ -1,5 +1,18 @@
 from rest_framework import serializers
 from recipe.models import Recipe
+from django.contrib.auth import get_user_model
+from djoser.serializers import UserSerializer
+# from users.models import User
+
+User = get_user_model()
+
+
+class CustomUserSerilizer(UserSerializer):
+    class Meta:
+        # add is_subscribed to fields  
+        model = User
+        fields = ['email', 'id', 'username', 'first_name',
+                  'last_name', 'is_subscribed']
 
 
 
@@ -36,6 +49,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     Example: tags=lunch&tags=breakfast
     Показывать рецепты только с указанными тегами (по slug)
     """
+    author = CustomUserSerilizer()
     class Meta:
         model = Recipe
-        fields = ['id', 'author', 'name', 'text']
+        fields = ['id', 'author', 'name', 'text', 'cooking_time']
+
+
+
+        

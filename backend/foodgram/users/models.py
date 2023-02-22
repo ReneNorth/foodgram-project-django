@@ -13,7 +13,10 @@ class User(AbstractUser):
         (MODERATOR, 'moderator'),
         (ADMIN, 'admin'),
     )
-
+    
+    is_subscribed = models.BooleanField(default=False, help_text='Designates' 
+                                        'whether this user is subscribed')
+    
     # email = models.EmailField(max_length=254, unique=True)
     # bio = models.TextField(
     #     'Биография',
