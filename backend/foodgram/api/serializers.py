@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from recipe.models import Recipe
+from recipe.models import Recipe, FavoriteRecipe
 from ingredients.models import Ingredient
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
@@ -21,6 +21,12 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = ['id', 'name', 'measurement_unit']
 
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoriteRecipe
+        fields = ['who_favorited', 'favorited_recipe']
+    
 
 class RecipeSerializer(serializers.ModelSerializer):
     """
@@ -56,8 +62,21 @@ class RecipeSerializer(serializers.ModelSerializer):
     Показывать рецепты только с указанными тегами (по slug)
     """
     author = CustomUserSerilizer()
-    # ingredents = IngredientSerializer?
+    is_favorited = serializers.SerializerMethodField()
+
+    def get_is_favorited(self, recipe):
+        user = self.context.get("request").user
+        # TODO оптимизировать запрос
+        if FavoriteRecipe.objects.filter(who_favorited=user,
+                                         favorited_recipe=recipe):
+            return True
+        return False
 
     class Meta:
         model = Recipe
-        fields = ['id', 'author', 'name', 'image', 'text', 'cooking_time']
+        fields = ['id', 'author', 'name', 'image',
+                  'text', 'cooking_time', 'is_favorited']
+
+        extra_kwargs = {
+            'is_favorited': {'read_only': True},
+        }
