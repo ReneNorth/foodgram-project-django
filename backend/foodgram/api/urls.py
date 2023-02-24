@@ -11,7 +11,7 @@ from .views import (RecipeViewSet,
 
 router1 = routers.SimpleRouter()
 router1.register(r'ingredients', IngredientsReadOnlyViewSet)
-# router1.register(r'recipes', RecipeViewSet)
+router1.register(r'recipes', RecipeViewSet)
 
 urlpatterns = [
     path('users/', UserViewSet.as_view({'GET': 'list'})),

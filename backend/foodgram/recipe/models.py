@@ -1,3 +1,4 @@
+from ingredients.models import Ingredient
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -23,6 +24,7 @@ class Recipe(models.Model):
                             verbose_name='Название')
     text = models.TextField(max_length=500,
                             verbose_name='Описание')
+    ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredient')
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MaxValueValidator(43200,
                                       'Вы указали время приготовления больше'
@@ -38,10 +40,29 @@ class Recipe(models.Model):
     
     def __str__(self) -> str:
         return f'id {self.id}: {self.name[:10]}'
-    # ingredients = 
-    # tags = 
     
+    # tags = 
     # is_in_shopping_cart
+
+
+class RecipeIngredient(models.Model):
+    ingredient = models.ForeignKey(Ingredient,
+                                   related_name='ingredients',
+                                   on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe,
+                               related_name='recipe',
+                               on_delete=models.CASCADE)
+    amount = models.PositiveSmallIntegerField(
+        verbose_name='количество',
+        default=1,
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(1,
+                                      'вес не может быть меньше одной десятой'
+                                      'от одной единицы измерения'), ])
+    
+    def __str__(self) -> str:
+        return f'Ингредиент {self.ingredient} в рецепте {self.recipe}'
 
 
 class FavoriteRecipe(models.Model):
