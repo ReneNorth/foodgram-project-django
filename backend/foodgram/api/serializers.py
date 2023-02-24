@@ -23,10 +23,30 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    who_favorited = serializers.SerializerMethodField()
+    favorited_recipe = serializers.SerializerMethodField()
+
+    def get_who_favorited(self, obj):
+        if "who_favorited" in self.context:
+            return self.context["who_favorited"].id
+        return None
+
+    def get_favorited_recipe(self, obj):
+        if "favorited_recipe" in self.context:
+            return self.context["favorited_recipe"].id
+        return None
+
     class Meta:
         model = FavoriteRecipe
         fields = ['who_favorited', 'favorited_recipe']
-    
+
+    def create(self, validated_data):
+        favorite_recipe = FavoriteRecipe.objects.create(
+            who_favorited_id=self.context["who_favorited"].id,
+            favorited_recipe_id=self.context["favorited_recipe"].id)
+        favorite_recipe.save()
+        return favorite_recipe
+
 
 class RecipeSerializer(serializers.ModelSerializer):
     """

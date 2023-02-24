@@ -4,20 +4,21 @@ from .views import (RecipeViewSet,
                     UserViewSet,
                     CustomUserSerilizer,
                     IngredientsReadOnlyViewSet,
-                    FavoritedViewSet
+                    FavoritedViewSet,
+                    FavoritedCreateDeleteViewSet,
                     )
 
 
 router1 = routers.SimpleRouter()
-router1.register(r'recipes', RecipeViewSet)
 router1.register(r'ingredients', IngredientsReadOnlyViewSet)
-router1.register(r'favorited', FavoritedViewSet)
-# router1.register(r'test_users', TestUserSerilizer, basename='test_users')
-
+# router1.register(r'recipes', RecipeViewSet)
 
 urlpatterns = [
-    path('users/', UserViewSet.as_view({'get': 'list'})),
+    path('users/', UserViewSet.as_view({'GET': 'list'})),
+    path('recipes/<int:pk>/favorite/',
+         FavoritedCreateDeleteViewSet.as_view({'post': 'create',
+                                               'delete': 'destroy'})),
+    path('', include(router1.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('', include(router1.urls))
 ]
