@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'recipe.apps.RecipeConfig',
     'ingredients.apps.IngredientsConfig',
+    'tags.apps.TagsConfig',
 ]
 
 MIDDLEWARE = [
