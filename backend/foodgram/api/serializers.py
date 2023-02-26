@@ -29,7 +29,8 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = RecipeIngredient
-        fields = '__all__'
+        fields = ['id', 'ingredient', 'amount']
+        # fields = '__all__'
         # extra_kwargs = {
         #     'amount': {'read_only': True},
         # }
@@ -39,7 +40,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     """ """
     author = CustomUserSerilizer()
     is_favorited = serializers.SerializerMethodField()
-    ingredients = RecipeIngredientSerializer(read_only=True, many=True)
+    recipes = RecipeIngredientSerializer(read_only=True, many=True)
 
     def get_is_favorited(self, recipe):
         user = self.context.get("request").user
@@ -52,11 +53,14 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ['id', 'author', 'name', 'image',
-                  'text', 'cooking_time', 'is_favorited', 'ingredients']
+                  'text', 'cooking_time', 'is_favorited',
+                #   'ingredients',
+                  'recipes',
+                  ]
 
         extra_kwargs = {
             'is_favorited': {'read_only': True},
-            'ingredients': {'read_only': True},
+            # 'ingredients': {'read_only': True},
         }
 
 
