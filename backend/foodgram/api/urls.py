@@ -1,17 +1,14 @@
-from django.urls import path, include, re_path
+from django.urls import include, path, re_path
 from rest_framework import routers
-from .views import (RecipeViewSet,
-                    UserViewSet,
-                    CustomUserSerilizer,
-                    IngredientsReadOnlyViewSet,
-                    FavoritedViewSet,
-                    FavoritedCreateDeleteViewSet,
-                    )
 
+from .views import (CustomUserSerilizer, FavoritedCreateDeleteViewSet,
+                    FavoritedViewSet, IngredientsReadOnlyViewSet,
+                    RecipeViewSet, UserViewSet, TagsReadOnlyViewSet)
 
 router1 = routers.SimpleRouter()
 router1.register(r'ingredients', IngredientsReadOnlyViewSet)
 router1.register(r'recipes', RecipeViewSet)
+router1.register(r'tags', TagsReadOnlyViewSet)
 
 urlpatterns = [
     path('users/', UserViewSet.as_view({'GET': 'list'})),

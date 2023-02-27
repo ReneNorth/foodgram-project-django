@@ -1,10 +1,13 @@
-from rest_framework import serializers, validators
-from recipe.models import Recipe, RecipeIngredient, FavoriteRecipe, RecipeTag
-from tags.models import Tag
-from ingredients.models import Ingredient
+import webcolors
+
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
-# from users.models import User
+from rest_framework import serializers
+
+from ingredients.models import Ingredient
+from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
+from tags.models import Tag
+
 
 User = get_user_model()
 
@@ -14,7 +17,7 @@ class CustomUserSerilizer(UserSerializer):
         # add is_subscribed to fields
         model = User
         fields = ['email', 'id', 'username', 'first_name',
-                  'last_name']
+                  'last_name', 'is_subscribed']
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -31,10 +34,9 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredient(serializers.ModelSerializer):
-    # всё таки сделать также как тэги? в чём отличите? почему 
-    # такой подход не сработал сначала?
     name = serializers.SerializerMethodField()
     measurement_unit = serializers.SerializerMethodField()
+
     class Meta:
         model = RecipeIngredient
         fields = [
@@ -43,21 +45,20 @@ class RecipeIngredient(serializers.ModelSerializer):
                   'measurement_unit',
                   'amount',
                   ]
+
     def get_name(self, obj):
         return Ingredient.objects.get(id=obj.ingredient.id).name
-    
+
     def get_measurement_unit(self, obj):
         return Ingredient.objects.get(id=obj.ingredient.id).measurement_unit
-        
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     """ """
     author = CustomUserSerilizer()
     is_favorited = serializers.SerializerMethodField()
-    ingredients = RecipeIngredient(read_only=True, many=True)
+    ingredients = RecipeIngredient(many=True)
     tags = TagSerializer(many=True)
-    # ingredients_in_recipe2 = serializers.SerializerMethodField()
 
     def get_is_favorited(self, recipe):
         user = self.context.get("request").user
@@ -66,25 +67,50 @@ class RecipeSerializer(serializers.ModelSerializer):
                                          favorited_recipe=recipe):
             return True
         return False
-    
-    # def get_ingredients_in_recipe2(self, obj):
-    #     return Recipe.ingredients.all()
-         
 
     class Meta:
         model = Recipe
-        fields = ['id', 'author', 'name', 'image',
-                  'text', 'cooking_time', 'is_favorited',
-                  'ingredients',
-                  'tags',
-                #   'ingredients_in_recipe2',
-                #   'recipes',
-                  ]
+        fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
+                  'is_in_shopping_cart', 'name', 'image', 'text',
+                  'cooking_time', ]
 
         extra_kwargs = {
             'is_favorited': {'read_only': True},
-            # 'ingredients': {'read_only': True},
         }
+
+
+class RecipeCreatePatchSerializer(serializers.ModelSerializer):
+    pass
+    
+    # genre = serializers.SlugRelatedField( 
+        # slug_field='slug', many=True, queryset=Genre.objects.all()) 
+    # category = serializers.SlugRelatedField( 
+        # slug_field='slug', queryset=Category.objects.all() ) 
+    class Meta:
+        fields = [
+            'name', 'text', 'cooking_time',
+        ]
+        model = Recipe
+
+
+
+class Hex2NameColor(serializers.Field):
+    # При чтении данных ничего не меняем - просто возвращаем как есть
+    def to_representation(self, value):
+        return value
+    # При записи код цвета конвертируется в его название
+    def to_internal_value(self, data):
+        # Доверяй, но проверяй
+        try:
+            # Если имя цвета существует, то конвертируем код в название
+            data = webcolors.hex_to_name(data)
+        except ValueError:
+            # Иначе возвращаем ошибку
+            raise serializers.ValidationError('Для этого цвета нет имени')
+        # Возвращаем данные в новом формате
+        return data
+
+
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

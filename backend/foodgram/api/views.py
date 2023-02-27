@@ -1,23 +1,19 @@
-from rest_framework import filters, status, viewsets, mixins
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-from .serializers import (RecipeSerializer,
-                          CustomUserSerilizer,
-                          IngredientSerializer,
-                          FavoriteSerializer,
-                          )
-from recipe.models import Recipe, FavoriteRecipe
-from ingredients.models import Ingredient
-from django.contrib.auth import get_user_model
 
+from ingredients.models import Ingredient
+from recipe.models import FavoriteRecipe, Recipe
+from tags.models import Tag
+
+from .serializers import (CustomUserSerilizer, IngredientSerializer,
+                          FavoriteSerializer, RecipeRetreiveDelListSerializer,
+                          RecipeCreatePatchSerializer, TagSerializer,
+                          )
 
 User = get_user_model()
-
-
-class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -25,9 +21,27 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerilizer
 
 
+class RecipeViewSet(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeRetreiveDelListSerializer
+
+    def get_serializer_class(self):
+        if self.action in ('retrieve', 'list', 'delete'):
+            return RecipeRetreiveDelListSerializer
+        return RecipeCreatePatchSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
 class IngredientsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+
+
+class TagsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
 
 class FavoritedViewSet(viewsets.ReadOnlyModelViewSet):
@@ -46,7 +60,7 @@ class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
                                    viewsets.GenericViewSet):
     queryset = FavoriteRecipe.objects.all()
     serializer_class = FavoriteSerializer
-
+    # TODO Refactoring 
     @action(methods=['post'], detail=False)
     def create(self, request, pk=None) -> Response:
         """Метод добавляет рецепт в избранные. ID юзера и рецепта передаются
