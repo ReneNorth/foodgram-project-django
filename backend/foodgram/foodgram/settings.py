@@ -4,7 +4,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(dotenv_path=os.path.abspath(os.path.join(BASE_DIR.parent, f'{os.pardir}/infra/.env')))
+load_dotenv(dotenv_path=os.path.abspath(
+    os.path.join(BASE_DIR.parent, f'{os.pardir}/infra/.env')))
 
 TEST_KEY = os.getenv('TEST_KEY')
 print(TEST_KEY, '<- test key is okay')
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     'recipe.apps.RecipeConfig',
     'ingredients.apps.IngredientsConfig',
     'tags.apps.TagsConfig',
+    'shopping_cart.apps.ShoppingCartConfig',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +56,7 @@ REST_FRAMEWORK = {
 }
 
 
-AUTH_USER_MODEL = "users.User" 
+AUTH_USER_MODEL = "users.User"
 
 
 ROOT_URLCONF = 'foodgram.urls'

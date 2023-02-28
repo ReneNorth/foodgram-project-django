@@ -33,18 +33,25 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug')
 
 
-class RecipeIngredient(serializers.ModelSerializer):
+class RecipeIngredientSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     measurement_unit = serializers.SerializerMethodField()
+    # recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
 
     class Meta:
         model = RecipeIngredient
         fields = [
-                  'ingredient',
+                  'ingredient', # переименовать поле на id?
                   'name',
                   'measurement_unit',
                   'amount',
+                #   'recipe',
                   ]
+        extra_kwargs = {
+            'measurement_unit': {'read_only': True},
+            'name': {'read_only': True},
+        }
+        
 
     def get_name(self, obj):
         return Ingredient.objects.get(id=obj.ingredient.id).name
@@ -57,7 +64,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     """ """
     author = CustomUserSerilizer()
     is_favorited = serializers.SerializerMethodField()
-    ingredients = RecipeIngredient(many=True)
+    ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
 
     def get_is_favorited(self, recipe):
@@ -79,18 +86,30 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         }
 
 
+
+
+
 class RecipeCreatePatchSerializer(serializers.ModelSerializer):
-    pass
-    
-    # genre = serializers.SlugRelatedField( 
-        # slug_field='slug', many=True, queryset=Genre.objects.all()) 
-    # category = serializers.SlugRelatedField( 
-        # slug_field='slug', queryset=Category.objects.all() ) 
+    tags = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Tag.objects.all())
+    ingredients = serializers.SlugRelatedField(
+        many=True,
+        slug_field='ingredient',
+        queryset=RecipeIngredient.objects.all()
+        #  queryset=RecipeIngredient.objects.all()
+        )
+
     class Meta:
         fields = [
-            'name', 'text', 'cooking_time',
+            'name', 'text', 'cooking_time', 'tags',
+            'ingredients',
         ]
         model = Recipe
+        
+    # def create(self, **validated_data):
+    #     print(self)
+    #     print(*validated_data)
+
 
 
 

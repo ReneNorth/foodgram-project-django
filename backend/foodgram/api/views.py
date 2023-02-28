@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ingredients.models import Ingredient
-from recipe.models import FavoriteRecipe, Recipe
+from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
 
 from .serializers import (CustomUserSerilizer, IngredientSerializer,
@@ -25,10 +25,31 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeRetreiveDelListSerializer
 
+    
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list', 'delete'):
             return RecipeRetreiveDelListSerializer
         return RecipeCreatePatchSerializer
+    
+    # def create(self, request, *args, **kwargs):
+        # print(self)
+        # # print(request.data)
+        # print(request.data['ingredients'][0]['id']) # получаем айдишник 
+        # print(request.data['ingredients'][0]['amount']) # получаем объем 
+        
+        # print(*args)
+        # print(*kwargs)
+        
+        # проверяем, существует ли ингредиент с таким id 
+        # ingredient = get_object_or_404(Ingredient, id=2)
+        
+        # serializer = self.get_serializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # self.perform_create(serializer)
+        # headers = self.get_success_headers(serializer.data)
+        # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        
+    
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -60,7 +81,7 @@ class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
                                    viewsets.GenericViewSet):
     queryset = FavoriteRecipe.objects.all()
     serializer_class = FavoriteSerializer
-    # TODO Refactoring 
+    # TODO Refactoring
     @action(methods=['post'], detail=False)
     def create(self, request, pk=None) -> Response:
         """Метод добавляет рецепт в избранные. ID юзера и рецепта передаются
