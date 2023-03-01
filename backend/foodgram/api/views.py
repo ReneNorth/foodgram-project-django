@@ -25,31 +25,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeRetreiveDelListSerializer
 
-    
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list', 'delete'):
             return RecipeRetreiveDelListSerializer
         return RecipeCreatePatchSerializer
-    
-    # def create(self, request, *args, **kwargs):
-        # print(self)
-        # # print(request.data)
-        # print(request.data['ingredients'][0]['id']) # получаем айдишник 
-        # print(request.data['ingredients'][0]['amount']) # получаем объем 
-        
-        # print(*args)
-        # print(*kwargs)
-        
-        # проверяем, существует ли ингредиент с таким id 
-        # ingredient = get_object_or_404(Ingredient, id=2)
-        
-        # serializer = self.get_serializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        # self.perform_create(serializer)
-        # headers = self.get_success_headers(serializer.data)
-        # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        
-    
+
+    def create(self, request, *args, **kwargs):
+        user = get_object_or_404(User, id=request.user.id)
+        serializer = self.get_serializer(data=request.data,
+                                         context={'user': user, })
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -96,7 +84,7 @@ class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # проверить не лишний ли декторатор
+    # TODO проверить не лишний ли декторатор
     @action(methods=['delete'], detail=False)
     def destroy(self, request, pk=None):
         favorited = get_object_or_404(FavoriteRecipe,
@@ -104,4 +92,3 @@ class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
                                       favorited_recipe_id=pk)
         self.perform_destroy(favorited)
         return Response('object deleted', status=status.HTTP_204_NO_CONTENT)
-

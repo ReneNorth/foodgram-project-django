@@ -14,7 +14,6 @@ User = get_user_model()
 
 class CustomUserSerilizer(UserSerializer):
     class Meta:
-        # add is_subscribed to fields
         model = User
         fields = ['email', 'id', 'username', 'first_name',
                   'last_name', 'is_subscribed']
@@ -36,22 +35,19 @@ class TagSerializer(serializers.ModelSerializer):
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     measurement_unit = serializers.SerializerMethodField()
-    # recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
 
     class Meta:
         model = RecipeIngredient
         fields = [
-                  'ingredient', # переименовать поле на id?
+                  'ingredient',  # переименовать поле на id?
                   'name',
                   'measurement_unit',
                   'amount',
-                #   'recipe',
                   ]
         extra_kwargs = {
             'measurement_unit': {'read_only': True},
             'name': {'read_only': True},
         }
-        
 
     def get_name(self, obj):
         return Ingredient.objects.get(id=obj.ingredient.id).name
@@ -86,18 +82,10 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         }
 
 
-
-
-
 class RecipeCreatePatchSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all())
-    ingredients = serializers.SlugRelatedField(
-        many=True,
-        slug_field='ingredient',
-        queryset=RecipeIngredient.objects.all()
-        #  queryset=RecipeIngredient.objects.all()
-        )
+    ingredients = RecipeIngredientSerializer(many=True)
 
     class Meta:
         fields = [
@@ -105,12 +93,25 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
             'ingredients',
         ]
         model = Recipe
-        
-    # def create(self, **validated_data):
-    #     print(self)
-    #     print(*validated_data)
 
+    def get_user(self, obj):
+        if "user" in self.context:
+            return self.context["user"]
+        return None
 
+    def create(self, validated_data):
+
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        user = self.context["user"]
+
+        instance = Recipe.objects.create(author=user, **validated_data)
+        instance.tags.set(tags)
+        instance.save()
+        for ingredient in ingredients:
+            print(ingredient)
+            RecipeIngredient.objects.create(recipe=instance, **ingredient)
+        return instance
 
 
 class Hex2NameColor(serializers.Field):
@@ -128,8 +129,6 @@ class Hex2NameColor(serializers.Field):
             raise serializers.ValidationError('Для этого цвета нет имени')
         # Возвращаем данные в новом формате
         return data
-
-
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
