@@ -11,7 +11,7 @@ router1.register(r'recipes', RecipeViewSet)
 router1.register(r'tags', TagsReadOnlyViewSet)
 
 urlpatterns = [
-    path('users/', UserViewSet.as_view({'GET': 'list'})),
+    # path('users/', UserViewSet.as_view({'GET': 'list'})), # зачем здесь был этот путь?
     path('recipes/<int:pk>/favorite/',
          FavoritedCreateDeleteViewSet.as_view({'post': 'create',
                                                'delete': 'destroy'})),

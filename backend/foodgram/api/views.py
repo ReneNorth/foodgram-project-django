@@ -1,12 +1,17 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, mixins, status, viewsets
+from rest_framework import mixins, status, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+# from django_filters.rest_framework import DjangoFilterBackend
+
+
+
 
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
+from users.permissions import (RecipePermission, )
 
 from .serializers import (CustomUserSerilizer, IngredientSerializer,
                           FavoriteSerializer, RecipeRetreiveDelListSerializer,
@@ -24,6 +29,9 @@ class UserViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeRetreiveDelListSerializer
+    permission_classes = [RecipePermission, ]
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ['tags', ]
 
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list', 'delete'):
@@ -69,6 +77,8 @@ class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
                                    viewsets.GenericViewSet):
     queryset = FavoriteRecipe.objects.all()
     serializer_class = FavoriteSerializer
+    permission_classes = (RecipePermission, )
+    
     # TODO Refactoring
     @action(methods=['post'], detail=False)
     def create(self, request, pk=None) -> Response:
@@ -86,9 +96,11 @@ class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
 
     # TODO проверить не лишний ли декторатор
     @action(methods=['delete'], detail=False)
-    def destroy(self, request, pk=None):
+    def destroy(self, request, pk=None) -> Response:
         favorited = get_object_or_404(FavoriteRecipe,
                                       who_favorited_id=request.user.id,
                                       favorited_recipe_id=pk)
         self.perform_destroy(favorited)
         return Response('object deleted', status=status.HTTP_204_NO_CONTENT)
+
+
