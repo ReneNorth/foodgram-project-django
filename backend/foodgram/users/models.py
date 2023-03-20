@@ -16,20 +16,7 @@ class User(AbstractUser):
     role = models.CharField(choices=CHOICES,
                             default='user',
                             max_length=128)
-    is_subscribed = models.BooleanField(default=False, help_text='Designates'
-                                        'whether this user is subscribed')
-    # name = models.CharField(max_length=50)
-    # surname = models.CharField(max_length=50)
-    
-    # email = models.EmailField(max_length=254, unique=True)
-    # bio = models.TextField(
-    #     'Биография',
-    #     blank=True,
-    # )
-    # role = models.CharField(choices=CHOICES,
-    #                         default='user',
-    #                         max_length=128)
-    # confirmation_code = models.CharField(max_length=30)
+
 
     class Meta:
         ordering = ['id']

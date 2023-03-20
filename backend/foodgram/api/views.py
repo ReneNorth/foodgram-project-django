@@ -1,21 +1,20 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import mixins, status, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 # from django_filters.rest_framework import DjangoFilterBackend
-
-
-
-
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
+from subscription.models import Subscription
 from users.permissions import (RecipePermission, )
 
 from .serializers import (CustomUserSerilizer, IngredientSerializer,
                           FavoriteSerializer, RecipeRetreiveDelListSerializer,
                           RecipeCreatePatchSerializer, TagSerializer,
+                          SubscriptionRecipeSerializer,
                           )
 
 User = get_user_model()
@@ -24,6 +23,34 @@ User = get_user_model()
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerilizer
+
+
+class SubscriptionRecipeListViewSet(viewsets.ModelViewSet):
+    serializer_class = SubscriptionRecipeSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get_queryset(self):
+        print(User.objects.filter(author__)
+        # print(Subscription.objects.prefetch_related('author__post'))
+        # print(Subscription.objects.filter(
+        #     user__id=self.request.user.id))
+        
+        return Subscription.objects.filter(
+            user__id=self.request.user.id).values
+        
+        # return Subscription.objects.filter(
+            # user__id=self.request.user.id).prefetch_related('author')
+
+
+class SubscriptionCreateDestroyViewSet(viewsets.ModelViewSet):
+    """Under dev."""
+    pass
+    # serializer_class = SubscriptionRecipeSerializer
+    # permission_classes = [IsAuthenticated, ]
+
+    # def get_queryset(self):
+    #     return Subscription.objects.filter(
+    #         user__id=self.kwargs['user_id'])
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -102,5 +129,3 @@ class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
                                       favorited_recipe_id=pk)
         self.perform_destroy(favorited)
         return Response('object deleted', status=status.HTTP_204_NO_CONTENT)
-
-

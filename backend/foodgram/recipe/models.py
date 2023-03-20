@@ -13,7 +13,8 @@ class Recipe(models.Model):
     Рецепты.
     """
     author = models.ForeignKey(User,
-                               verbose_name=('Автор'),
+                               related_name='recipes',
+                               verbose_name='Автор',
                                on_delete=models.CASCADE)
     name = models.CharField(max_length=80,
                             verbose_name='Название')

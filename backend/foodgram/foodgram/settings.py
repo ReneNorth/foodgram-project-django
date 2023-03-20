@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'ingredients.apps.IngredientsConfig',
     'tags.apps.TagsConfig',
     'shopping_cart.apps.ShoppingCartConfig',
+    'subscription.apps.SubscriptionConfig',
 ]
 
 MIDDLEWARE = [

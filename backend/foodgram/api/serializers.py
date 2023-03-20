@@ -7,6 +7,7 @@ from rest_framework import serializers
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
+from subscription.models import Subscription
 
 
 User = get_user_model()
@@ -16,7 +17,9 @@ class CustomUserSerilizer(UserSerializer):
     class Meta:
         model = User
         fields = ['email', 'id', 'username', 'first_name',
-                  'last_name', 'is_subscribed']
+                  'last_name',
+                #   'is_subscribed'
+                  ]
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -49,6 +52,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
             'name': {'read_only': True},
         }
 
+    # TODO оптимизация через related?
     def get_name(self, obj):
         return Ingredient.objects.get(id=obj.ingredient.id).name
 
@@ -64,7 +68,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
 
     def get_is_favorited(self, recipe):
-        user = self.context.get("request").user
+        user = self.context.get('request').user
         # TODO оптимизировать запрос
         if FavoriteRecipe.objects.filter(who_favorited=user,
                                          favorited_recipe=recipe):
@@ -95,21 +99,20 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
         model = Recipe
 
     def get_user(self, obj):
-        if "user" in self.context:
-            return self.context["user"]
+        if 'user' in self.context:
+            return self.context['user']
         return None
 
     def create(self, validated_data):
 
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        user = self.context["user"]
+        user = self.context['user']
 
         instance = Recipe.objects.create(author=user, **validated_data)
         instance.tags.set(tags)
         instance.save()
         for ingredient in ingredients:
-            print(ingredient)
             RecipeIngredient.objects.create(recipe=instance, **ingredient)
         return instance
 
@@ -161,3 +164,58 @@ class FavoriteSerializer(serializers.ModelSerializer):
             favorited_recipe_id=recipe_id)
         favorite_recipe.save()
         return favorite_recipe
+
+
+class SubscriptionRecipeSerializer(CustomUserSerilizer):
+    pass
+    # subscribed = CustomUserSerilizer(many=True)
+    
+    # author = CustomUserSerilizer()
+    # author = serializers.SlugRelatedField(slug_field='username',
+
+    #                              queryset=User.objects.all()) 
+    
+    # recipes = RecipeRetreiveDelListSerializer
+    # recipes = serializers.SerializerMethodField()
+
+    # class Meta:
+    #     model = Subscription
+    #     fields = ['author',
+                #   'user'
+                #   'recipes'
+                #   ]
+    
+    # TODO остановися на том, что надо понять как в выдачу 
+    # по подпискам добавить не только данные об авторах, на которые была подписка, 
+    # но и их посты. Для начала - делать это во воьюсете или сериализаторе. 
+    # второй вопрос - как делится "ответственность" между queryset во 
+    # viewset и сериализатором при добавлении данных в выдачу
+    
+    # def get_recipes(self, obj):
+        # print(obj)
+        # print(dir(obj))
+        # print(obj.author_id)
+        # return Recipe.objects.get(author_id=obj.author_id)
+    # Понять как к выдаче подписок прицепить рецепты авторов (наверняка такое было в заданиях)
+        
+
+# @login_required
+# def profile_follow(request, username):
+#     author = get_object_or_404(User, username=username)
+#     if request.user.id != author.id:
+#         Follow.objects.get_or_create(user=request.user, author=author)
+#     return redirect('posts:profile', username=username)
+        
+
+# @login_required
+# def profile_unfollow(request, username):
+#     unfollowing_author = get_object_or_404(User, username=username)
+#     get_object_or_404(
+#         Follow,
+#         user=request.user,
+#         author=unfollowing_author
+#     ).delete()
+#     return redirect('posts:profile', username=unfollowing_author)
+
+
+
