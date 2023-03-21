@@ -30,7 +30,7 @@ class SubscriptionRecipeListViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
-        print(User.objects.filter(author__)
+        print(User.objects.filter(id=1)
         # print(Subscription.objects.prefetch_related('author__post'))
         # print(Subscription.objects.filter(
         #     user__id=self.request.user.id))
