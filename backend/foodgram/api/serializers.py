@@ -166,8 +166,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
         return favorite_recipe
 
 
-class SubscriptionRecipeSerializer(CustomUserSerilizer):
-    pass
+class SubscriptionRecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = '__all__'
     # subscribed = CustomUserSerilizer(many=True)
     
     # author = CustomUserSerilizer()

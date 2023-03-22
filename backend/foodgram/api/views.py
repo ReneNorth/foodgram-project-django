@@ -26,17 +26,25 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionRecipeListViewSet(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all()
     serializer_class = SubscriptionRecipeSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
-        print(User.objects.filter(id=1)
+        return Recipe.objects.filter(author__subscribed__user__id=self.request.user.id)
+        # return Recipe.objects.filter(author__subscribed__=request.user.id)
+        
+        
+        
+        
+        
+        # print(User.objects.filter())
         # print(Subscription.objects.prefetch_related('author__post'))
         # print(Subscription.objects.filter(
         #     user__id=self.request.user.id))
         
-        return Subscription.objects.filter(
-            user__id=self.request.user.id).values
+        # return Subscription.objects.filter(
+        #     user__id=self.request.user.id).values
         
         # return Subscription.objects.filter(
             # user__id=self.request.user.id).prefetch_related('author')

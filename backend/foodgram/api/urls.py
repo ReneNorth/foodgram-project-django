@@ -15,7 +15,7 @@ router1.register(r'tags', TagsReadOnlyViewSet)
 router1.register(
     'users/subscribtions',
     SubscriptionRecipeListViewSet,
-    basename='subscribe')
+    basename='subscribtions')
 
 router1.register(
     r'users/(?P<user_id>\d+)/subscribe',
