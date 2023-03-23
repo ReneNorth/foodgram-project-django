@@ -24,7 +24,7 @@ router1.register(
 
 
 urlpatterns = [
-    path('tata/', UserViewSet.as_view({'get': 'list'})), # зачем здесь был этот путь?
+    path('users/', UserViewSet.as_view({'get': 'list'})), # зачем здесь был этот путь?
     path('recipes/<int:pk>/favorite/',
          FavoritedCreateDeleteViewSet.as_view({'post': 'create',
                                                'delete': 'destroy'})),

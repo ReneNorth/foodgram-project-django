@@ -35,7 +35,6 @@ class CustomUserSerilizer(UserSerializer):
         return False
 
 
-
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
@@ -190,10 +189,21 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 class SubscriptionRecipeSerializer(serializers.ModelSerializer):
     recipes = RecipeLightSerializer(many=True)
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ['email', 'id', 'first_name', 'last_name', 'username',
                   'recipes',
-                  'is_subscribed',
+                  'is_subscribed', # сейчас не заработает
                   ]
+    
+    def get_is_subscribed(self, author):
+        user = self.context.get('request').user
+        # TODO оптимизировать запрос
+        # if 1 == 1:
+        # if get_object_or_404(Subscription, author=author, user=user):
+        if Subscription.objects.filter(author=author,
+                                       user=user):
+            return True
+        return False
