@@ -14,7 +14,8 @@ from users.permissions import (RecipePermission, )
 from .serializers import (CustomUserSerilizer, IngredientSerializer,
                           FavoriteSerializer, RecipeRetreiveDelListSerializer,
                           RecipeCreatePatchSerializer, TagSerializer,
-                          SubscriptionRecipeSerializer,
+                          SubscriptionListRecipeSerializer,
+                          SubscriptionCreateDeleteSerializer
                           )
 
 User = get_user_model()
@@ -25,25 +26,47 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerilizer
 
 
-class SubscriptionRecipeListViewSet(viewsets.ModelViewSet):
-    serializer_class = SubscriptionRecipeSerializer
+class SubscriptionListCreateDestroyViewSet(viewsets.GenericViewSet,
+                                           mixins.DestroyModelMixin,
+                                           mixins.ListModelMixin,
+                                           mixins.CreateModelMixin):
     permission_classes = [IsAuthenticated, ]
+    print(123)
 
     def get_queryset(self):
         return User.objects.filter(subscribed__user__id=self.request.user.id)
-        # return Recipe.objects.filter(author__subscribed__user__id=self.request.user.id)
 
+    def get_serializer_class(self):
+        print(self.action)
+        if self.action == 'list':
+            return SubscriptionListRecipeSerializer
+        # if self.action == 'delete':
+            # print('123')
+        return SubscriptionCreateDeleteSerializer
 
-
-class SubscriptionCreateDestroyViewSet(viewsets.ModelViewSet):
-    """Under dev."""
-    pass
-    # serializer_class = SubscriptionRecipeSerializer
-    # permission_classes = [IsAuthenticated, ]
-
-    # def get_queryset(self):
-    #     return Subscription.objects.filter(
-    #         user__id=self.kwargs['user_id'])
+    def create(self, request, author_id=None) -> Response:
+        """"""
+        user = get_object_or_404(User, id=request.user.id)
+        author = get_object_or_404(User, id=author_id)
+        serializer = self.get_serializer(data=request.data,
+                                         context={'user': user,
+                                                  'author': author,
+                                                  'request': request})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # соановился на ошибке detail not found
+    # @action(methods=['delete'], detail=False)
+    def destroy(self, request, author_id=None) -> Response:
+        user = get_object_or_404(User, id=request.user.id)
+        author = get_object_or_404(User, id=author_id)
+        subscription = get_object_or_404(Subscription,
+                                         user=user,
+                                         author=author)
+        self.perform_destroy(subscription)
+        return Response('object deleted', status=status.HTTP_204_NO_CONTENT)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

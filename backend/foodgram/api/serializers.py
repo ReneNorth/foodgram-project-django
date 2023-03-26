@@ -4,11 +4,15 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator, ValidationError
 
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
 from subscription.models import Subscription
+
+import base64  
+from django.core.files.base import ContentFile
 
 
 User = get_user_model()
@@ -33,6 +37,23 @@ class CustomUserSerilizer(UserSerializer):
                                        user=user):
             return True
         return False
+
+
+class Base64ImageField(serializers.ImageField):
+    def to_internal_value(self, data):
+        # Если полученный объект строка, и эта строка 
+        # начинается с 'data:image'...
+        if isinstance(data, str) and data.startswith('data:image'):
+            # ...начинаем декодировать изображение из base64.
+            # Сначала нужно разделить строку на части.
+            format, imgstr = data.split(';base64,')  
+            # И извлечь расширение файла.
+            ext = format.split('/')[-1]  
+            # Затем декодировать сами данные и поместить результат в файл,
+            # которому дать название по шаблону.
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+
+        return super().to_internal_value(data)
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -79,6 +100,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
+    image = Base64ImageField(required=False, allow_null=True)
 
     def get_is_favorited(self, recipe):
         user = self.context.get('request').user
@@ -93,7 +115,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time', ]
-
+        # read_only_fields = 
         extra_kwargs = {
             'is_favorited': {'read_only': True},
         }
@@ -138,23 +160,6 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
         return instance
 
 
-class Hex2NameColor(serializers.Field):
-    # При чтении данных ничего не меняем - просто возвращаем как есть
-    def to_representation(self, value):
-        return value
-    # При записи код цвета конвертируется в его название
-    def to_internal_value(self, data):
-        # Доверяй, но проверяй
-        try:
-            # Если имя цвета существует, то конвертируем код в название
-            data = webcolors.hex_to_name(data)
-        except ValueError:
-            # Иначе возвращаем ошибку
-            raise serializers.ValidationError('Для этого цвета нет имени')
-        # Возвращаем данные в новом формате
-        return data
-
-
 class FavoriteSerializer(serializers.ModelSerializer):
     who_favorited = serializers.SerializerMethodField()
     favorited_recipe = serializers.SerializerMethodField()
@@ -187,23 +192,52 @@ class FavoriteSerializer(serializers.ModelSerializer):
         return favorite_recipe
 
 
-class SubscriptionRecipeSerializer(serializers.ModelSerializer):
-    recipes = RecipeLightSerializer(many=True)
-    is_subscribed = serializers.SerializerMethodField()
-
+class SubscriptionCreateDeleteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['email', 'id', 'first_name', 'last_name', 'username',
-                  'recipes',
-                  'is_subscribed', # сейчас не заработает
-                  ]
+        model = Subscription
+        fields = ['user', 'author']
+        read_only_fields = ['user', 'author']
+        extra_kwargs = {
+            'user': {'required': False},
+            'author': {'required': False},
+        }
+
+    def create(self, validated_data):
+        return Subscription.objects.create(**validated_data,
+                                           user=self.context['user'],
+                                           author=self.context['author'])
+
+    def validate(self, data):
+        if self.context['request'].method == 'POST':
+            user = self.context['user'].id
+            author = self.context['author'].id
+            if author == user:
+                raise ValidationError('Нельзя подписаться на себя!')
+            if Subscription.objects.filter(user__id=user,
+                                           author__id=author).exists():
+                raise ValidationError('Нельзя подписаться два раза')
+        return data
+
+
+class SubscriptionListRecipeSerializer(serializers.ModelSerializer): # надо переприумать для соответстия ТЗ
+    # for del after tests
+    pass
+    # recipes = RecipeLightSerializer(many=True)
+    # is_subscribed = serializers.SerializerMethodField()
+
+    # class Meta:
+    #     model = User
+    #     fields = ['email', 'id', 'first_name', 'last_name', 'username',
+    #               'recipes',
+    #               'is_subscribed', # сейчас не заработает
+    #               ]
     
-    def get_is_subscribed(self, author):
-        user = self.context.get('request').user
+    # def get_is_subscribed(self, author):
+    #     user = self.context.get('request').user
         # TODO оптимизировать запрос
         # if 1 == 1:
         # if get_object_or_404(Subscription, author=author, user=user):
-        if Subscription.objects.filter(author=author,
-                                       user=user):
-            return True
-        return False
+        # if Subscription.objects.filter(author=author,
+        #                                user=user):
+        #     return True
+        # return False

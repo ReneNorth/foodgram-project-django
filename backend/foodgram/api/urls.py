@@ -1,30 +1,24 @@
 from django.urls import include, path, re_path
 from rest_framework import routers
 
-from .views import (CustomUserSerilizer, FavoritedCreateDeleteViewSet,
-                    FavoritedViewSet, IngredientsReadOnlyViewSet,
+from .views import (CustomUserSerilizer,
+                    FavoritedCreateDeleteViewSet,
+                    # FavoritedViewSet,
+                    IngredientsReadOnlyViewSet,
                     RecipeViewSet, UserViewSet, TagsReadOnlyViewSet,
-                    SubscriptionRecipeListViewSet,
-                    SubscriptionCreateDestroyViewSet
+                    SubscriptionListCreateDestroyViewSet
                     )
 
 router1 = routers.SimpleRouter()
 router1.register(r'ingredients', IngredientsReadOnlyViewSet)
 router1.register(r'recipes', RecipeViewSet)
 router1.register(r'tags', TagsReadOnlyViewSet)
-router1.register(
-    'users/subscriptions',
-    SubscriptionRecipeListViewSet,
-    basename='subscriptions')
-router1.register(
-    r'users/(?P<user_id>\d+)/subscribe',
-    SubscriptionCreateDestroyViewSet,
-    basename='subscribe')
-
-
-
 urlpatterns = [
-    path('users/', UserViewSet.as_view({'get': 'list'})), # зачем здесь был этот путь?
+    path('users/', UserViewSet.as_view({'get': 'list'})),
+    path('users/<int:author_id>/subscribe/',
+         SubscriptionListCreateDestroyViewSet.as_view({'post': 'create',
+                                                       'get': 'list',
+                                                       'delete': 'destroy'})),
     path('recipes/<int:pk>/favorite/',
          FavoritedCreateDeleteViewSet.as_view({'post': 'create',
                                                'delete': 'destroy'})),
