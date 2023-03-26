@@ -134,5 +134,5 @@ dmypy.json
 
 # media
 /media
-
+backend/foodgram/media/
 *requests.http

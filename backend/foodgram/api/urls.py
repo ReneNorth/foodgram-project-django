@@ -18,7 +18,7 @@ router1.register('users/subscriptions',
                  SubscriptionListCreateDestroyViewSet,
                  'subscriptions')
 urlpatterns = [
-    path('users/', UserViewSet.as_view({'get': 'list'})),
+    # path('users/', UserViewSet.as_view({'get': 'list'})),
     path('users/<int:author_id>/subscribe/',
          SubscriptionListCreateDestroyViewSet.as_view({'post': 'create',
                                                        'delete': 'destroy'})),
