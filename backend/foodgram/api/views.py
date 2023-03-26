@@ -11,25 +11,41 @@ from tags.models import Tag
 from subscription.models import Subscription
 from users.permissions import (RecipePermission, )
 
-from .serializers import (CustomUserSerilizer, IngredientSerializer,
+from .serializers import (IngredientSerializer,
                           FavoriteSerializer, RecipeRetreiveDelListSerializer,
                           RecipeCreatePatchSerializer, TagSerializer,
-                          SubscriptionListRecipeSerializer,
+                          SubscriptionListSerializer,
                           SubscriptionCreateDeleteSerializer
                           )
 
 User = get_user_model()
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = CustomUserSerilizer
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = User.objects.all()
+#     serializer_class = CustomUserSerilizer
+    
+    
+#     @action(detail=False,
+#         methods=['GET', 'PATCH', ],
+#         permission_classes=[IsAuthenticated, ],
+#         url_path='me',)
+#     def get_me(self, request):
+#         user = get_object_or_404(User, pk=request.user.pk)
+#         if request.method == 'GET':
+#             return Response(UserSerializer(user).data,
+#                             status=status.HTTP_200_OK)
+#         serializer = UserSerializer(user, data=request.data, partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SubscriptionListCreateDestroyViewSet(viewsets.GenericViewSet,
-                                           mixins.DestroyModelMixin,
+class SubscriptionListCreateDestroyViewSet(mixins.DestroyModelMixin,
                                            mixins.ListModelMixin,
-                                           mixins.CreateModelMixin):
+                                           mixins.CreateModelMixin,
+                                           viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
@@ -37,7 +53,7 @@ class SubscriptionListCreateDestroyViewSet(viewsets.GenericViewSet,
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return SubscriptionListRecipeSerializer
+            return SubscriptionListSerializer
         return SubscriptionCreateDeleteSerializer
 
     def create(self, request, author_id=None) -> Response:
@@ -60,7 +76,7 @@ class SubscriptionListCreateDestroyViewSet(viewsets.GenericViewSet,
                                          user=user,
                                          author=author)
         self.perform_destroy(subscription)
-        return Response('object deleted', status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -88,6 +104,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 
+    # def destroy(self, request, author_id=None) -> Response:
+    #     user = get_object_or_404(User, id=request.user.id)
+    #     author = get_object_or_404(User, id=author_id)
+    #     subscription = get_object_or_404(Subscription,
+    #                                      user=user,
+    #                                      author=author)
+    #     self.perform_destroy(subscription)
+    #     return Response('object deleted', status=status.HTTP_204_NO_CONTENT)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class IngredientsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
@@ -96,17 +130,6 @@ class IngredientsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 class TagsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-
-
-# class FavoritedViewSet(viewsets.ReadOnlyModelViewSet):
-    # """Test viewset"""
-    # queryset = FavoriteRecipe.objects.all()
-    # serializer_class = FavoriteSerializer
-
-    # def get_queryset(self):
-    #     return FavoriteRecipe.objects.filter(
-    #         who_favorited=self.request.user
-    #     )
 
 
 class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
@@ -139,3 +162,14 @@ class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
                                       favorited_recipe_id=pk)
         self.perform_destroy(favorited)
         return Response('object deleted', status=status.HTTP_204_NO_CONTENT)
+
+
+# class FavoritedViewSet(viewsets.ReadOnlyModelViewSet):
+    # """Test viewset"""
+    # queryset = FavoriteRecipe.objects.all()
+    # serializer_class = FavoriteSerializer
+
+    # def get_queryset(self):
+    #     return FavoriteRecipe.objects.filter(
+    #         who_favorited=self.request.user
+    #     )

@@ -17,19 +17,14 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter, )
     search_fields = ('username', )
-    lookup_field = 'username'
+    # lookup_field = 'username'
 
     @action(detail=False,
-            methods=['GET', 'PATCH', ],
+            methods=['GET', ],
             permission_classes=[IsAuthenticated, ],
             url_path='me',)
     def get_me(self, request):
         user = get_object_or_404(User, pk=request.user.pk)
-        if request.method == 'GET':
-            return Response(UserSerializer(user).data,
-                            status=status.HTTP_200_OK)
-        serializer = UserSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(UserSerializer(
+            user,
+            context={'request': request}).data, status=status.HTTP_200_OK)

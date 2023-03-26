@@ -1,5 +1,3 @@
-import webcolors
-
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserSerializer
@@ -18,27 +16,6 @@ from django.core.files.base import ContentFile
 User = get_user_model()
 
 
-class CustomUserSerilizer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = User
-        fields = ['email', 'id', 'username', 'first_name',
-                  'last_name',
-                  'is_subscribed'
-                  ]
-    
-    def get_is_subscribed(self, author):
-        user = self.context.get('request').user
-        # TODO оптимизировать запрос
-        # if 1 == 1:
-        # if get_object_or_404(Subscription, author=author, user=user):
-        if Subscription.objects.filter(author=author,
-                                       user=user):
-            return True
-        return False
-
-
 class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
@@ -46,6 +23,24 @@ class Base64ImageField(serializers.ImageField):
             ext = format.split('/')[-1]
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
         return super().to_internal_value(data)
+
+
+class CustomUserSerilizer(UserSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['email', 'id', 'username', 'first_name',
+                  'last_name',
+                  'is_subscribed'
+                  ]
+
+    def get_is_subscribed(self, author):
+        user = self.context.get('request').user
+        if Subscription.objects.filter(author=author,
+                                       user=user).exists():
+            return True
+        return False
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -96,7 +91,6 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, recipe):
         user = self.context.get('request').user
-        # TODO оптимизировать запрос get_object_or_404
         if FavoriteRecipe.objects.filter(who_favorited=user,
                                          favorited_recipe=recipe).exists():
             return True
@@ -212,25 +206,21 @@ class SubscriptionCreateDeleteSerializer(serializers.ModelSerializer):
         return data
 
 
-class SubscriptionListRecipeSerializer(serializers.ModelSerializer): # надо переприумать для соответстия ТЗ
-    # for del after tests
-    pass
-    # recipes = RecipeLightSerializer(many=True)
-    # is_subscribed = serializers.SerializerMethodField()
+class SubscriptionListSerializer(serializers.ModelSerializer):
+    """lists authors the user is subscribed to and their recipes"""
+    recipes = RecipeLightSerializer(many=True)
+    is_subscribed = serializers.SerializerMethodField()
 
-    # class Meta:
-    #     model = User
-    #     fields = ['email', 'id', 'first_name', 'last_name', 'username',
-    #               'recipes',
-    #               'is_subscribed', # сейчас не заработает
-    #               ]
-    
-    # def get_is_subscribed(self, author):
-    #     user = self.context.get('request').user
-        # TODO оптимизировать запрос
-        # if 1 == 1:
-        # if get_object_or_404(Subscription, author=author, user=user):
-        # if Subscription.objects.filter(author=author,
-        #                                user=user):
-        #     return True
-        # return False
+    class Meta:
+        model = User
+        fields = ['email', 'id', 'first_name', 'last_name', 'username',
+                  'is_subscribed',
+                  'recipes',
+                  ]
+
+    def get_is_subscribed(self, author):
+        user = self.context.get('request').user
+        if Subscription.objects.filter(author=author,
+                                       user=user):
+            return True
+        return False
