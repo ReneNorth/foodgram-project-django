@@ -33,7 +33,7 @@ class Recipe(models.Model):
         verbose_name='Время на приготовление в минутах'
         )
     image = models.ImageField(
-        upload_to='recipes/', null=True, blank=True)
+        upload_to='recipes/', null=True, default=None)
     tags = models.ManyToManyField(Tag, through='RecipeTag')
 
     def __str__(self) -> str:

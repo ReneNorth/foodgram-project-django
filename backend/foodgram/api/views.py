@@ -31,17 +31,13 @@ class SubscriptionListCreateDestroyViewSet(viewsets.GenericViewSet,
                                            mixins.ListModelMixin,
                                            mixins.CreateModelMixin):
     permission_classes = [IsAuthenticated, ]
-    print(123)
 
     def get_queryset(self):
         return User.objects.filter(subscribed__user__id=self.request.user.id)
 
     def get_serializer_class(self):
-        print(self.action)
         if self.action == 'list':
             return SubscriptionListRecipeSerializer
-        # if self.action == 'delete':
-            # print('123')
         return SubscriptionCreateDeleteSerializer
 
     def create(self, request, author_id=None) -> Response:
@@ -56,9 +52,7 @@ class SubscriptionListCreateDestroyViewSet(viewsets.GenericViewSet,
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    # соановился на ошибке detail not found
-    # @action(methods=['delete'], detail=False)
+
     def destroy(self, request, author_id=None) -> Response:
         user = get_object_or_404(User, id=request.user.id)
         author = get_object_or_404(User, id=author_id)
@@ -104,15 +98,15 @@ class TagsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
 
 
-class FavoritedViewSet(viewsets.ReadOnlyModelViewSet):
-    """Test viewset"""
-    queryset = FavoriteRecipe.objects.all()
-    serializer_class = FavoriteSerializer
+# class FavoritedViewSet(viewsets.ReadOnlyModelViewSet):
+    # """Test viewset"""
+    # queryset = FavoriteRecipe.objects.all()
+    # serializer_class = FavoriteSerializer
 
-    def get_queryset(self):
-        return FavoriteRecipe.objects.filter(
-            who_favorited=self.request.user
-        )
+    # def get_queryset(self):
+    #     return FavoriteRecipe.objects.filter(
+    #         who_favorited=self.request.user
+    #     )
 
 
 class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,

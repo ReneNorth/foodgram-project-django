@@ -11,7 +11,7 @@ from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
 from subscription.models import Subscription
 
-import base64  
+import base64
 from django.core.files.base import ContentFile
 
 
@@ -41,18 +41,10 @@ class CustomUserSerilizer(UserSerializer):
 
 class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
-        # Если полученный объект строка, и эта строка 
-        # начинается с 'data:image'...
         if isinstance(data, str) and data.startswith('data:image'):
-            # ...начинаем декодировать изображение из base64.
-            # Сначала нужно разделить строку на части.
-            format, imgstr = data.split(';base64,')  
-            # И извлечь расширение файла.
-            ext = format.split('/')[-1]  
-            # Затем декодировать сами данные и поместить результат в файл,
-            # которому дать название по шаблону.
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-
         return super().to_internal_value(data)
 
 
@@ -106,7 +98,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         # TODO оптимизировать запрос get_object_or_404
         if FavoriteRecipe.objects.filter(who_favorited=user,
-                                         favorited_recipe=recipe):
+                                         favorited_recipe=recipe).exists():
             return True
         return False
 
@@ -134,12 +126,13 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all())
     ingredients = RecipeIngredientSerializer(many=True)
+    image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Recipe
         fields = [
             'name', 'text', 'cooking_time', 'tags',
-            'ingredients', ]
+            'ingredients', 'image']
 
     def get_user(self, obj):
         if 'user' in self.context:
