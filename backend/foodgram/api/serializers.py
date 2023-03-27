@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator, ValidationError
-
+from rest_framework.validators import ValidationError
+from django.shortcuts import get_object_or_404
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
@@ -25,22 +24,24 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
-class CustomUserSerilizer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+class CustomUserSerilizer(UserSerializer): # FOR DEL
+    """ FOR DEL """
+    pass
+    # is_subscribed = serializers.SerializerMethodField()
 
-    class Meta:
-        model = User
-        fields = ['email', 'id', 'username', 'first_name',
-                  'last_name',
-                  'is_subscribed'
-                  ]
+    # class Meta:
+    #     model = User
+    #     fields = ['email', 'id', 'username', 'first_name',
+    #               'last_name',
+    #               'is_subscribed'
+    #               ]
 
-    def get_is_subscribed(self, author):
-        user = self.context.get('request').user
-        if Subscription.objects.filter(author=author,
-                                       user=user).exists():
-            return True
-        return False
+    # def get_is_subscribed(self, author):
+    #     user = self.context.get('request').user
+    #     if Subscription.objects.filter(author=author,
+    #                                    user=user).exists():
+    #         return True
+    #     return False
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -50,7 +51,6 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
@@ -224,3 +224,26 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
                                        user=user):
             return True
         return False
+
+
+class UserSerializer(serializers.ModelSerializer): # FOR DEL
+    pass
+
+    # class Meta:
+    #     model = User
+    #     fields = ('username', 'email', 'first_name',
+    #               'last_name', 'bio', 'role', )
+    #     lookup_field = 'username'
+    #     extra_kwargs = {
+    #         'url': {'lookup_field': 'username'}
+    #     }
+
+    # def validate_role(self, value):
+    #     """Проверка роли, которую указал пользователь.
+    #     В случае, если пользователь с ролью user прописал роль
+    #     admin или moderator, принудительно устанавливаем роль user,
+    #     иначе устанавливаем роль из переданной переменной."""
+    #     if (value == ('admin' or 'moderator')
+    #        and get_object_or_404(User, pk=self.instance.pk).is_user):
+    #         return 'user'
+    #     return value

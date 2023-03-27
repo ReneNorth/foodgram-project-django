@@ -5,19 +5,12 @@ from .models import User
 from subscription.models import Subscription
 
 
-class UserSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
         fields = ['email', 'id', 'username', 'first_name',
-                  'last_name',
-                  'is_subscribed'
-                  ]
-        lookup_field = 'username'
-        # extra_kwargs = {
-        #     'url': {'lookup_field': 'username'}
-        # }
+                  'last_name', ]
 
     def validate_role(self, value):
         """Проверка роли, которую указал пользователь.
@@ -29,9 +22,23 @@ class UserSerializer(serializers.ModelSerializer):
             return 'user'
         return value
 
+
+class UserReadOnlySerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['email', 'id', 'username', 'first_name',
+                  'last_name',
+                  'is_subscribed'
+                  ]
+        lookup_field = 'username'
+        read_only_fields = ['is_subscribed']
+
     def get_is_subscribed(self, author):
-        user = self.context.get('request').user
-        if Subscription.objects.filter(author=author,
-                                       user=user).exists():
-            return True
-        return False
+        if self.context['request'].method != 'POST':
+            user = self.context.get('request').user
+            if Subscription.objects.filter(author=author,
+                                        user=user).exists():
+                return True
+            return False
