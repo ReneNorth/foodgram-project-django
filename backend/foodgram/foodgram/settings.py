@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'djoser',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -55,10 +57,20 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
     # 'DEFAULT_FILTER_BACKENDS': [
     #     'django_filters.rest_framework.DjangoFilterBackend'
     #     ], 
 }
+
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$' 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost',
+] 
 
 
 DJOSER = {
