@@ -136,3 +136,6 @@ dmypy.json
 /media
 backend/foodgram/media/
 *requests.http
+
+# project-specific
+old_requirements.txt
