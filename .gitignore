@@ -1,3 +1,13 @@
+# media
+/media
+backend/foodgram/media/
+*requests.http
+
+# project-specific
+old_requirements.txt
+logs
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -132,10 +142,3 @@ dmypy.json
 .idea
 
 
-# media
-/media
-backend/foodgram/media/
-*requests.http
-
-# project-specific
-old_requirements.txt
