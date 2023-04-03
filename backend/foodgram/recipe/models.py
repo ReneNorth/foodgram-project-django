@@ -75,3 +75,6 @@ class FavoriteRecipe(models.Model):
     favorited_recipe = models.ForeignKey(Recipe,
                                          related_name='is_favorited',
                                          on_delete=models.CASCADE)
+    
+    def __str__(self) -> str:
+        return f'{self.who_favorited} добавил в избранное {self.favorited_recipe}'

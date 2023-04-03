@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_yasg',
+    'debug_toolbar',
     # 'django_filters',
     'sorl.thumbnail',
     'rest_framework',
@@ -48,6 +49,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -73,10 +76,18 @@ CORS_URLS_REGEX = r'^/api/.*$'
 # ] 
 
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
+
 DJOSER = {
-    'SERIALIZERS': {'user_create': 'users.serializers.UserCreateSerializer',
-                    'user': 'users.serializers.UserReadOnlySerializer',
-                    'current_user': 'users.serializers.UserReadOnlySerializer',},
+    'LOGIN_FIELD': 'email',
+    'SERIALIZERS': {
+        
+        # 'user_create': 'users.serializers.UserCreateSerializer',
+        'user': 'users.serializers.UserReadOnlySerializer',
+        'current_user': 'users.serializers.UserReadOnlySerializer', },
 }
 
 
@@ -156,8 +167,8 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/django_static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'django_static')
 print(STATIC_ROOT)
 
 

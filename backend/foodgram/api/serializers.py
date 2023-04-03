@@ -7,8 +7,10 @@ from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
 from subscription.models import Subscription
+from users.serializers import UserReadOnlySerializer
 
 import base64
+import webcolors
 from django.core.files.base import ContentFile
 
 
@@ -24,24 +26,21 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
-class CustomUserSerilizer(UserSerializer): # FOR DEL
-    """ FOR DEL """
-    pass
-    # is_subscribed = serializers.SerializerMethodField()
-
-    # class Meta:
-    #     model = User
-    #     fields = ['email', 'id', 'username', 'first_name',
-    #               'last_name',
-    #               'is_subscribed'
-    #               ]
-
-    # def get_is_subscribed(self, author):
-    #     user = self.context.get('request').user
-    #     if Subscription.objects.filter(author=author,
-    #                                    user=user).exists():
-    #         return True
-    #     return False
+class Hex2NameColor(serializers.Field):
+    # При чтении данных ничего не меняем - просто возвращаем как есть
+    def to_representation(self, value):
+        return value
+    # При записи код цвета конвертируется в его название
+    def to_internal_value(self, data):
+        # Доверяй, но проверяй
+        try:
+            # Если имя цвета существует, то конвертируем код в название
+            data = webcolors.hex_to_name(data)
+        except ValueError:
+            # Иначе возвращаем ошибку
+            raise serializers.ValidationError('Для этого цвета нет имени')
+        # Возвращаем данные в новом формате
+        return data
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -51,6 +50,8 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
+    color = Hex2NameColor()
+
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
@@ -83,28 +84,29 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     """ """
-    author = CustomUserSerilizer()
-    is_favorited = serializers.SerializerMethodField()
+    author = UserReadOnlySerializer()
+    # is_favorited = serializers.SerializerMethodField()
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
 
-    def get_is_favorited(self, recipe):
-        user = self.context.get('request').user
-        if FavoriteRecipe.objects.filter(who_favorited=user,
-                                         favorited_recipe=recipe).exists():
-            return True
-        return False
+    # def get_is_favorited(self, recipe):
+    #     user = self.context.get('request').user
+    #     if FavoriteRecipe.objects.filter(who_favorited=user,
+    #                                      favorited_recipe=recipe).exists():
+    #         return True
+    #     return False
 
     class Meta:
         model = Recipe
-        fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
+        fields = ['id', 'tags', 'author', 'ingredients',
+                #   'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time', ]
-        # read_only_fields = 
-        extra_kwargs = {
-            'is_favorited': {'read_only': True},
-        }
+        read_only_fields = ['id', 'tags', 'author', 'ingredients',
+                            # 'is_favorited',
+                            'is_in_shopping_cart', 'name', 'image', 'text',
+                            'cooking_time', ]
 
 
 class RecipeLightSerializer(serializers.ModelSerializer):
@@ -247,3 +249,22 @@ class UserSerializer(serializers.ModelSerializer): # FOR DEL
     #        and get_object_or_404(User, pk=self.instance.pk).is_user):
     #         return 'user'
     #     return value
+class CustomUserSerilizer(UserSerializer): # FOR DEL
+    pass
+    """ FOR DEL """
+
+    # is_subscribed = serializers.SerializerMethodField()
+
+    # class Meta:
+    #     model = User
+    #     fields = ['email', 'id', 'username', 'first_name',
+    #               'last_name',
+    #               'is_subscribed'
+                #   ]
+
+    # def get_is_subscribed(self, author):
+    #     user = self.context.get('request').user
+    #     if Subscription.objects.filter(author=author,
+    #                                    user=user).exists():
+    #         return True
+    #     return False

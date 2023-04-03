@@ -10,6 +10,7 @@ from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
 from subscription.models import Subscription
 from users.permissions import (RecipePermission, )
+from rest_framework.pagination import LimitOffsetPagination
 
 from .serializers import (IngredientSerializer,
                           FavoriteSerializer, RecipeRetreiveDelListSerializer,
@@ -40,6 +41,13 @@ User = get_user_model()
 #             serializer.save()
 #             return Response(serializer.data, status=status.HTTP_200_OK)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# get_paginated_response(self, data): принимает сериализованные данные страницы, возвращает экземпляр Response.
+# При описании собственных классов-пагинаторов эти методы тоже можно переопределять — например, если нужно изменить структуру ответа или названия полей в нём. Эта информация вам точно пригодится при решении задач в тренажёре. Примеры из документации тоже помогут.
+
+
 
 
 class SubscriptionListCreateDestroyViewSet(mixins.DestroyModelMixin,
@@ -82,7 +90,10 @@ class SubscriptionListCreateDestroyViewSet(mixins.DestroyModelMixin,
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeRetreiveDelListSerializer
-    permission_classes = [RecipePermission, ]
+    pagination_class = LimitOffsetPagination
+    # permission_classes = [RecipePermission, ]
+    permission_classes = [AllowAny, ]
+    
     # filter_backends = [DjangoFilterBackend]
     # filterset_fields = ['tags', ]
 

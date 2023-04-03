@@ -6,6 +6,9 @@ class Tag(models.Model):
     color = models.CharField(max_length=50, unique=True, verbose_name='Цвет')
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Cсылка')
 
+    class Meta:
+        ordering = ['-id']
+
     def __str__(self) -> str:
         """Return the name field of the model."""
         return self.name
