@@ -20,8 +20,8 @@ class Recipe(models.Model):
                             verbose_name='Название')
     text = models.TextField(max_length=500,
                             verbose_name='Описание')
-    is_in_shopping_cart = models.BooleanField(default=False,
-                                              verbose_name='в списке покупок')
+    # is_in_shopping_cart = models.BooleanField(default=False,
+    #                                           verbose_name='в списке покупок')
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MaxValueValidator(43200,
                                       'Вы указали время приготовления больше'

@@ -9,6 +9,7 @@ from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
 from subscription.models import Subscription
+from shopping_cart.models import InShoppingCart
 from users.permissions import (RecipePermission, )
 from rest_framework.pagination import LimitOffsetPagination
 
@@ -16,38 +17,11 @@ from .serializers import (IngredientSerializer,
                           FavoriteSerializer, RecipeRetreiveDelListSerializer,
                           RecipeCreatePatchSerializer, TagSerializer,
                           SubscriptionListSerializer,
-                          SubscriptionCreateDeleteSerializer
+                          SubscriptionCreateDeleteSerializer,
+                          InShoppingCartSerializer,
                           )
 
 User = get_user_model()
-
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = CustomUserSerilizer
-    
-    
-#     @action(detail=False,
-#         methods=['GET', 'PATCH', ],
-#         permission_classes=[IsAuthenticated, ],
-#         url_path='me',)
-#     def get_me(self, request):
-#         user = get_object_or_404(User, pk=request.user.pk)
-#         if request.method == 'GET':
-#             return Response(UserSerializer(user).data,
-#                             status=status.HTTP_200_OK)
-#         serializer = UserSerializer(user, data=request.data, partial=True)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-# get_paginated_response(self, data): принимает сериализованные данные страницы, возвращает экземпляр Response.
-# При описании собственных классов-пагинаторов эти методы тоже можно переопределять — например, если нужно изменить структуру ответа или названия полей в нём. Эта информация вам точно пригодится при решении задач в тренажёре. Примеры из документации тоже помогут.
-
-
 
 
 class SubscriptionListCreateDestroyViewSet(mixins.DestroyModelMixin,
@@ -93,7 +67,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     # permission_classes = [RecipePermission, ]
     permission_classes = [AllowAny, ]
-    
     # filter_backends = [DjangoFilterBackend]
     # filterset_fields = ['tags', ]
 
@@ -142,6 +115,7 @@ class IngredientsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 class TagsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    pagination_class = None
 
 
 class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
@@ -176,12 +150,33 @@ class FavoritedCreateDeleteViewSet(mixins.CreateModelMixin,
         return Response('object deleted', status=status.HTTP_204_NO_CONTENT)
 
 
-# class FavoritedViewSet(viewsets.ReadOnlyModelViewSet):
-    # """Test viewset"""
-    # queryset = FavoriteRecipe.objects.all()
-    # serializer_class = FavoriteSerializer
+class InShoppingCartCreateDeleteViewSet(mixins.CreateModelMixin,
+                                        mixins.DestroyModelMixin,
+                                        viewsets.GenericViewSet):
+    queryset = InShoppingCart.objects.all()
+    serializer_class = InShoppingCartSerializer
+    permission_classes = (RecipePermission, )
+    
+    # TODO Refactoring
+    @action(methods=['post'], detail=False)
+    def create(self, request, pk=None) -> Response:
+        """Метод добавляет рецепт в избранные. ID юзера и рецепта передаются
+        сериализатору через контекст"""
+        user = get_object_or_404(User, id=request.user.id)
+        recipe = get_object_or_404(Recipe, pk=pk)
+        serializer = self.get_serializer(data=request.data,
+                                         context={'user': user,
+                                                  'recipe_in_cart': recipe})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # def get_queryset(self):
-    #     return FavoriteRecipe.objects.filter(
-    #         who_favorited=self.request.user
-    #     )
+    # TODO проверить не лишний ли декторатор
+    @action(methods=['delete'], detail=False)
+    def destroy(self, request, pk=None) -> Response:
+        recipe_in_cart = get_object_or_404(InShoppingCart,
+                                      user=request.user.id,
+                                      recipe_in_cart_id=pk)
+        self.perform_destroy(recipe_in_cart)
+        return Response('object deleted', status=status.HTTP_204_NO_CONTENT)

@@ -7,6 +7,7 @@ from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
 from subscription.models import Subscription
+from shopping_cart.models import InShoppingCart
 from users.serializers import UserReadOnlySerializer
 
 import base64
@@ -54,7 +55,7 @@ class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'color', 'slug')
+        fields = ['id', 'name', 'color', 'slug']
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
@@ -85,26 +86,36 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     """ """
     author = UserReadOnlySerializer()
-    # is_favorited = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
 
-    # def get_is_favorited(self, recipe):
-    #     user = self.context.get('request').user
-    #     if FavoriteRecipe.objects.filter(who_favorited=user,
-    #                                      favorited_recipe=recipe).exists():
-    #         return True
-    #     return False
+    def get_is_favorited(self, recipe):
+        user = self.context.get('request').user
+        if FavoriteRecipe.objects.filter(who_favorited=user,
+                                         favorited_recipe=recipe).exists():
+            return True
+        return False
+    
+    def get_is_in_shopping_cart(self, recipe):
+        # pass
+        user = self.context.get('request').user
+        if InShoppingCart.objects.filter(user=user,
+                                         recipe_in_cart=recipe).exists():
+            return True
+        return False
 
     class Meta:
         model = Recipe
         fields = ['id', 'tags', 'author', 'ingredients',
-                #   'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image', 'text',
+                  'is_favorited',
+                  'is_in_shopping_cart',
+                  'name', 'image', 'text',
                   'cooking_time', ]
         read_only_fields = ['id', 'tags', 'author', 'ingredients',
-                            # 'is_favorited',
+                            'is_favorited',
                             'is_in_shopping_cart', 'name', 'image', 'text',
                             'cooking_time', ]
 
@@ -181,6 +192,38 @@ class FavoriteSerializer(serializers.ModelSerializer):
         return favorite_recipe
 
 
+class InShoppingCartSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    recipe_in_cart = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+        if "user" in self.context:
+            return self.context["user"].id
+        return None
+
+    def get_recipe_in_cart(self, obj):
+        if "recipe_in_cart" in self.context:
+            return self.context["recipe_in_cart"].id
+        return None
+
+    class Meta:
+        model = FavoriteRecipe
+        fields = ['user', 'recipe_in_cart']
+
+    def create(self, validated_data):
+        user_id = self.context["user"].id
+        recipe_id = self.context["recipe_in_cart"].id
+        if InShoppingCart.objects.filter(user=user_id,
+                                         recipe_in_cart_id=recipe_id):
+            raise serializers.ValidationError('Нельзя добавить рецепт в '
+                                              'избранные два раза')
+        recipe_in_cart = InShoppingCart.objects.create(
+            user_id=user_id,
+            recipe_in_cart_id=recipe_id)
+        recipe_in_cart.save()
+        return recipe_in_cart
+
+
 class SubscriptionCreateDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
@@ -226,45 +269,3 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
                                        user=user):
             return True
         return False
-
-
-class UserSerializer(serializers.ModelSerializer): # FOR DEL
-    pass
-
-    # class Meta:
-    #     model = User
-    #     fields = ('username', 'email', 'first_name',
-    #               'last_name', 'bio', 'role', )
-    #     lookup_field = 'username'
-    #     extra_kwargs = {
-    #         'url': {'lookup_field': 'username'}
-    #     }
-
-    # def validate_role(self, value):
-    #     """Проверка роли, которую указал пользователь.
-    #     В случае, если пользователь с ролью user прописал роль
-    #     admin или moderator, принудительно устанавливаем роль user,
-    #     иначе устанавливаем роль из переданной переменной."""
-    #     if (value == ('admin' or 'moderator')
-    #        and get_object_or_404(User, pk=self.instance.pk).is_user):
-    #         return 'user'
-    #     return value
-class CustomUserSerilizer(UserSerializer): # FOR DEL
-    pass
-    """ FOR DEL """
-
-    # is_subscribed = serializers.SerializerMethodField()
-
-    # class Meta:
-    #     model = User
-    #     fields = ['email', 'id', 'username', 'first_name',
-    #               'last_name',
-    #               'is_subscribed'
-                #   ]
-
-    # def get_is_subscribed(self, author):
-    #     user = self.context.get('request').user
-    #     if Subscription.objects.filter(author=author,
-    #                                    user=user).exists():
-    #         return True
-    #     return False
