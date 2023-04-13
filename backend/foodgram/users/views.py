@@ -8,14 +8,14 @@ from rest_framework.permissions import AllowAny
 
 from .models import User
 from .permissions import CreateListUsersPermission
-from .serializers import UserReadOnlySerializer
+from .serializers import CustomUserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
     # permission_classes = [CreateListUsersPermission, IsAuthenticated]
     permission_classes = [AllowAny, ]
     queryset = User.objects.all()
-    serializer_class = UserReadOnlySerializer
+    serializer_class = CustomUserSerializer
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter, )
     search_fields = ('username', )
@@ -27,6 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
             url_path='me',)
     def get_me(self, request):
         user = get_object_or_404(User, pk=request.user.pk)
-        return Response(UserReadOnlySerializer(
+        return Response(CustomUserSerializer(
             user,
             context={'request': request}).data, status=status.HTTP_200_OK)
+

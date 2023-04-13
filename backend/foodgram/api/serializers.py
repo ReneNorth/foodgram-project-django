@@ -8,7 +8,7 @@ from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
 from subscription.models import Subscription
 from shopping_cart.models import InShoppingCart
-from users.serializers import UserReadOnlySerializer
+from users.serializers import CustomUserSerializer
 
 import base64
 import webcolors
@@ -85,12 +85,20 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     """ """
-    author = UserReadOnlySerializer()
+    author = CustomUserSerializer()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
+    # is_subscribed = serializers.SerializerMethodField()
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
+
+    # def get_is_subscribed(self, recipe):
+    #     user = self.context.get('request').user
+    #     if Subscription.objects.filter(author=recipe.author,
+    #                                    user=user):
+    #         return True
+    #     return False
 
     def get_is_favorited(self, recipe):
         user = self.context.get('request').user
@@ -98,9 +106,8 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
                                          favorited_recipe=recipe).exists():
             return True
         return False
-    
+
     def get_is_in_shopping_cart(self, recipe):
-        # pass
         user = self.context.get('request').user
         if InShoppingCart.objects.filter(user=user,
                                          recipe_in_cart=recipe).exists():
@@ -111,6 +118,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ['id', 'tags', 'author', 'ingredients',
                   'is_favorited',
+                #   'is_subscribed',
                   'is_in_shopping_cart',
                   'name', 'image', 'text',
                   'cooking_time', ]

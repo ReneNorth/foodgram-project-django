@@ -1,0 +1,23 @@
+
+POST http://127.0.0.1:8000/api/users/ HTTP/1.1
+content-type: application/json
+Authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
+
+{
+  "email": "user19@yandex.ru",
+  "username": "user19.pupkin",
+  "first_name": "user19",
+  "last_name": "user19",
+  "password": "Qwerty17"
+}
+
+
+
+# # POST http://127.0.0.1/api/auth/token/login/ HTTP/1.1
+# POST http://127.0.0.1:8000/api/auth/token/login/ HTTP/1.1
+# content-type: application/json
+
+# {
+#     "email": "user19@yandex.ru",
+#     "password": "Qwerty17"
+# }

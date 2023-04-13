@@ -85,9 +85,10 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
         
-        # 'user_create': 'users.serializers.UserCreateSerializer',
-        'user': 'users.serializers.UserReadOnlySerializer',
-        'current_user': 'users.serializers.UserReadOnlySerializer', },
+        'user_create': 'users.serializers.UserReadOnlySerializer',
+        # 'user': 'users.serializers.UserReadOnlySerializer',
+        # 'current_user': 'users.serializers.UserReadOnlySerializer', 
+        },
 }
 
 
@@ -114,30 +115,32 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', default='postgres'),
-        'USER': os.getenv('POSTGRES_USER', default='postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
-        'HOST': os.getenv('DB_HOST', default='db'),
-        'PORT': os.getenv('DB_PORT', default='5432')
+LOCAL_DEV = False
+if LOCAL_DEV is False: 
+    DATABASES = {
+        'default': {
+            'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
+            'NAME': os.getenv('DB_NAME', default='postgres'),
+            'USER': os.getenv('POSTGRES_USER', default='postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+            'HOST': os.getenv('DB_HOST', default='db'),
+            'PORT': os.getenv('DB_PORT', default='5432')
+        }
     }
-}
-# print(DATABASES)
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.getenv('DB_ENGINE_LOCAL', 'django.db.backends.postgresql'),
-#         'NAME': os.getenv('DB_NAME_LOCAL', default='foodgram'),
-#         'USER': os.getenv('POSTGRES_USER_LOCAL', default='yury'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD_LOCAL', default='foodgram'),
-#         'HOST': os.getenv('DB_HOST_LOCAL', default='localhost'),
-#         'PORT': os.getenv('DB_PORT_LOCAL', default='5432')
-#     }
-# }
+if LOCAL_DEV is True:
 
+    DATABASES = {
+        'default': {
+            'ENGINE': os.getenv('DB_ENGINE_LOCAL', 'django.db.backends.postgresql'),
+            'NAME': os.getenv('DB_NAME_LOCAL', default='foodgram'),
+            'USER': os.getenv('POSTGRES_USER_LOCAL', default='yury'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD_LOCAL', default='foodgram'),
+            'HOST': os.getenv('DB_HOST_LOCAL', default='localhost'),
+            'PORT': os.getenv('DB_PORT_LOCAL', default='5432')
+        }
+    }
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

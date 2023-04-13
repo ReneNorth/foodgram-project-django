@@ -7,7 +7,6 @@ from .views import (
                     RecipeViewSet, TagsReadOnlyViewSet,
                     SubscriptionListCreateDestroyViewSet,
                     InShoppingCartCreateDeleteViewSet
-                    
                     )
 
 

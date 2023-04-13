@@ -1,45 +1,48 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
-from .models import User
+from django.contrib.auth.hashers import make_password
 from subscription.models import Subscription
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
-    pass
-
-    # class Meta:
-    #     model = User
-    #     fields = ['email', 'id', 'username', 'first_name',
-    #               'last_name', 'password']
-
-    # def validate_role(self, value):
-    #     """Проверка роли, которую указал пользователь.
-    #     В случае, если пользователь с ролью user прописал роль
-    #     admin или moderator, принудительно устанавливаем роль user,
-    #     иначе устанавливаем роль из переданной переменной."""
-    #     if (value == ('admin' or 'moderator')
-    #        and get_object_or_404(User, pk=self.instance.pk).is_user):
-    #         return 'user'
-    #     return value
+User = get_user_model()
 
 
-class UserReadOnlySerializer(serializers.ModelSerializer):
-    # is_subscribed = serializers.SerializerMethodField()
+class CustomUserSerializer(serializers.ModelSerializer):
+    
 
     class Meta:
         model = User
         fields = ['email', 'id', 'username', 'first_name',
-                  'last_name',
+                  'last_name', 'password',
                 #   'is_subscribed'
                   ]
         lookup_field = 'username'
-        # read_only_fields = ['is_subscribed']
-
-    # def get_is_subscribed(self, author):
-    #     if self.context['request'].method != 'POST':
-    #         user = self.context.get('request').user
-    #         if Subscription.objects.filter(author=author,
-    #                                        user=user).exists():
-    #             return True
-    #         return False
+        extra_kwargs = {'password': {'write_only': True}}
+        
+    def create(self, validated_data):
+        user = User(email=validated_data['email'],
+                    username=validated_data['username'],
+                    first_name=validated_data['first_name'],
+                    last_name=validated_data['last_name'],
+                    password=make_password(validated_data['password']))
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+      
+class SubscribedUserSerializer(serializers.ModelSerializer):
+  is_subscribed = serializers.SerializerMethodField()
+  
+  
+  
+  fields = ['email', 'id', 'username', 'first_name',
+                  'last_name', 'password',
+                  'is_subscribed'
+                  ]
+  def (self, obj):
+        user_id = self.context.get("user_id")
+        if user_id:
+            return user_id in obj.my_objects.values_list("user_id", flat=True)
+        return False
+            
