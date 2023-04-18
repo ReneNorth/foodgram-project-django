@@ -27,10 +27,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_yasg',
     'debug_toolbar',
-    # 'django_filters',
     'sorl.thumbnail',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'corsheaders',
     'djoser',
     'users.apps.UsersConfig',
@@ -85,8 +85,9 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
         
-        'user_create': 'users.serializers.UserReadOnlySerializer',
-        # 'user': 'users.serializers.UserReadOnlySerializer',
+        # 'user_create': 'users.serializers.UserReadOnlySerializer',
+        'user_create': 'users.serializers.CustomUserSerializer',
+        # 'user': 'users.serializers.CustomUserSerializer',
         # 'current_user': 'users.serializers.UserReadOnlySerializer', 
         },
 }
@@ -115,7 +116,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-LOCAL_DEV = False
+LOCAL_DEV = True
 if LOCAL_DEV is False: 
     DATABASES = {
         'default': {

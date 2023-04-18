@@ -32,17 +32,24 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
       
 class SubscribedUserSerializer(serializers.ModelSerializer):
+  """для страницы отдельного рецепта"""
   is_subscribed = serializers.SerializerMethodField()
-  
-  
-  
   fields = ['email', 'id', 'username', 'first_name',
                   'last_name', 'password',
                   'is_subscribed'
                   ]
-  def (self, obj):
-        user_id = self.context.get("user_id")
-        if user_id:
-            return user_id in obj.my_objects.values_list("user_id", flat=True)
-        return False
+  
+  
+  # 1. вытащить из контекста id рецепта 
+  # 2. подтянуть автора этого рецепта
+  # 3. определить подписан ли уже юзер на автора 
+  # 4. в зависимости от существования подписки вернуть значение 
+  def get_is_subscribed(self, obj):
+    pass
+        # user = self.context.get('request').user
+        # author = # recipe__author...
+        # if Subscription.objects.filter(author=author,
+        #                                user=user):
+        #     return True
+        # return False
             

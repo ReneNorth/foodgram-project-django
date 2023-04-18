@@ -6,6 +6,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 # from django_filters.rest_framework import DjangoFilterBackend
 from ingredients.models import Ingredient
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from tags.models import Tag
 from subscription.models import Subscription
@@ -66,9 +68,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeRetreiveDelListSerializer
     pagination_class = LimitOffsetPagination
     # permission_classes = [RecipePermission, ]
+    pagination_class = LimitOffsetPagination
     permission_classes = [AllowAny, ]
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_fields = ['tags', ]
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    
+    filterset_fields = ['author', 'tags__slug', 'is_favorited']
 
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list', 'delete'):
