@@ -116,7 +116,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-LOCAL_DEV = True
+LOCAL_DEV = False
 if LOCAL_DEV is False: 
     DATABASES = {
         'default': {

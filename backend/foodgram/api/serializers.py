@@ -89,6 +89,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     # is_subscribed = serializers.SerializerMethodField()
+    test_field = serializers.IntegerField()
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
@@ -118,6 +119,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ['id', 'tags', 'author', 'ingredients',
                   'is_favorited',
+                  'test_field',
                 #   'is_subscribed',
                   'is_in_shopping_cart',
                   'name', 'image', 'text',

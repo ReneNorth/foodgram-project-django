@@ -14,6 +14,8 @@ from subscription.models import Subscription
 from shopping_cart.models import InShoppingCart
 from users.permissions import (RecipePermission, )
 from rest_framework.pagination import LimitOffsetPagination
+from django.db.models import Count
+from .filters import RecipeFilter
 
 from .serializers import (IngredientSerializer,
                           FavoriteSerializer, RecipeRetreiveDelListSerializer,
@@ -64,15 +66,20 @@ class SubscriptionListCreateDestroyViewSet(mixins.DestroyModelMixin,
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
+    # queryset = Recipe.objects.all()
+    queryset = Recipe.objects.annotate(test_field=Count('tags'))
     serializer_class = RecipeRetreiveDelListSerializer
     pagination_class = LimitOffsetPagination
     # permission_classes = [RecipePermission, ]
     pagination_class = LimitOffsetPagination
+    filterset_class = RecipeFilter
     permission_classes = [AllowAny, ]
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     
-    filterset_fields = ['author', 'tags__slug', 'is_favorited']
+    filterset_fields = ['author__id', 'tags__slug',
+                        # 'only_is_favorited',
+                        # 'test_field',
+                        ]
 
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list', 'delete'):
@@ -90,6 +97,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+# Делаешь кастомный фильтр с нужными полями для запроса и ставишь его во вью в filterset_class
+# По тем полям, что м2м, в кастоме-фильтре надо определить кверисет, чтобы ясно было,
+# какую выборку фильтровать. А по тем полям, которые вычисляются (избранное-да-нет),
+# в типе фильтра указать метод, а потом этот метод расписать.
+# Очень похоже на сериализаторы, только вместо “serializers.” там “filters.”
+
 
 
     # def destroy(self, request, author_id=None) -> Response:

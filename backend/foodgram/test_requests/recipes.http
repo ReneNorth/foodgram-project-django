@@ -4,6 +4,6 @@
 # http://127.0.0.1:8000/api/recipes/tags=black
 # http://127.0.0.1:8000/api/recipes/
 # http://127.0.0.1:8000/api/recipes/?page=1&limit=6&tags=special_link
-http://127.0.0.1:8000/api/recipes/?page=1&limit=6&author=20&tags=speclink
+http://127.0.0.1:8000/api/recipes/?page=1&limit=6is_favorited=1&is_in_shopping_cart=1&tags=speclink&author=2
 content-type: application/json
 Authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
