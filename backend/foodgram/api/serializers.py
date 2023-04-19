@@ -102,15 +102,15 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     #     return False
 
     def get_is_favorited(self, recipe):
-        user = self.context.get('request').user
-        if FavoriteRecipe.objects.filter(who_favorited=user,
+        user_id = self.context.get('request').user.id
+        if FavoriteRecipe.objects.filter(who_favorited__id=user_id,
                                          favorited_recipe=recipe).exists():
             return True
         return False
 
     def get_is_in_shopping_cart(self, recipe):
-        user = self.context.get('request').user
-        if InShoppingCart.objects.filter(user=user,
+        user_id = self.context.get('request').user.id
+        if InShoppingCart.objects.filter(user__id=user_id,
                                          recipe_in_cart=recipe).exists():
             return True
         return False
@@ -274,8 +274,8 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
                   ]
 
     def get_is_subscribed(self, author):
-        user = self.context.get('request').user
+        user_id = self.context.get('request').user.id
         if Subscription.objects.filter(author=author,
-                                       user=user):
+                                       user__id=user_id):
             return True
         return False
