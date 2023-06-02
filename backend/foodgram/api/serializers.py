@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+import logging
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 from rest_framework.validators import ValidationError
@@ -16,6 +17,7 @@ from django.core.files.base import ContentFile
 
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 class Base64ImageField(serializers.ImageField):
@@ -86,20 +88,12 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     """ """
     author = CustomUserSerializer()
-    is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     # is_subscribed = serializers.SerializerMethodField()
     test_field = serializers.IntegerField()
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
-
-    # def get_is_subscribed(self, recipe):
-    #     user = self.context.get('request').user
-    #     if Subscription.objects.filter(author=recipe.author,
-    #                                    user=user):
-    #         return True
-    #     return False
 
     def get_is_favorited(self, recipe):
         user_id = self.context.get('request').user.id
@@ -120,7 +114,6 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         fields = ['id', 'tags', 'author', 'ingredients',
                   'is_favorited',
                   'test_field',
-                #   'is_subscribed',
                   'is_in_shopping_cart',
                   'name', 'image', 'text',
                   'cooking_time', ]

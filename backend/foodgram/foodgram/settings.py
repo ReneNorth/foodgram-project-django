@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from django.utils.log import DEFAULT_LOGGING
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(dotenv_path=os.path.abspath(
@@ -12,7 +13,7 @@ print(TEST_KEY, '<- test key is okay')
 print(BASE_DIR)
 SECRET_KEY = os.getenv('DJANGO_KEY')
 
-
+LOCAL_DEV = False
 DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'web', '127.0.0.1', 'localhost', '127.0.0.1:8000']
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'tags.apps.TagsConfig',
     'shopping_cart.apps.ShoppingCartConfig',
     'subscription.apps.SubscriptionConfig',
+    'drf_api_logger',
 ]
 
 MIDDLEWARE = [
@@ -50,9 +52,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware',
 ]
 
 
@@ -116,7 +118,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-LOCAL_DEV = False
+
 if LOCAL_DEV is False: 
     DATABASES = {
         'default': {
@@ -202,4 +204,47 @@ LOGGING = {
             'propagate': True,
         },
     },
+}
+
+# LOGGING_CONFIG = None
+# LOGLEVEL = os.getenv('DJ_LOGLEVEL', 'info').upper()
+
+
+DRF_API_LOGGER_DATABASE = True
+LOGLEVEL = 'DEBUG'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+        'django.server': DEFAULT_LOGGING['formatters']['django.server'],
+    },
+    'handlers': {
+        'console': {
+            'level': f'{LOGLEVEL}',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'docker_log': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'verbose',
+            'filename': f'{BASE_DIR}/logs/logs_main.log'
+        },
+        'django.server': DEFAULT_LOGGING['handlers']['django.server'],
+    },
+    'loggers': {
+        '': {
+            'level': LOGLEVEL,
+            'handlers': ['console', 'docker_log'],
+        },
+        'django.server': DEFAULT_LOGGING['loggers']['django.server'],
+    }
 }

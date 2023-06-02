@@ -76,7 +76,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny, ]
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     
-    filterset_fields = ['author__id', 'tags__slug',
+    filterset_fields = ['author__id',
+                        'tags__slug',
                         # 'only_is_favorited',
                         # 'test_field',
                         ]
