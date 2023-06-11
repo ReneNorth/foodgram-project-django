@@ -7,12 +7,9 @@ services:
     env_file:
       - ./.env
   web:
-    # image: yurydenorth/sprint16_p:1
     build:
       context: ../backend
     restart: always
-    # ports: 
-    #   - "8000:8000"
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
@@ -35,7 +32,6 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
-      # - ../frontend/build:/var/html/static/
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/django_static/
       - media_value:/var/html/media/
