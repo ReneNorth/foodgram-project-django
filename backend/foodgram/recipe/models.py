@@ -9,9 +9,7 @@ User = get_user_model()
 
 
 class Recipe(models.Model):
-    """
-    Рецепты.
-    """
+    """Recipes."""
     author = models.ForeignKey(User,
                                related_name='recipes',
                                verbose_name='Автор',
@@ -20,8 +18,6 @@ class Recipe(models.Model):
                             verbose_name='Название')
     text = models.TextField(max_length=500,
                             verbose_name='Описание')
-    # is_in_shopping_cart = models.BooleanField(default=False,
-    #                                           verbose_name='в списке покупок')
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MaxValueValidator(43200,
                                       'Вы указали время приготовления больше'
@@ -31,7 +27,7 @@ class Recipe(models.Model):
                                       'Время приготовления не может'
                                       'быть меньше одной минуты')],
         verbose_name='Время на приготовление в минутах'
-        )
+    )
     image = models.ImageField(
         upload_to='recipes/', null=True, default=None)
     tags = models.ManyToManyField(Tag, through='RecipeTag')
@@ -49,7 +45,7 @@ class RecipeTag(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    """ Ingredients for recipes """
+    """Ingredients for recipes."""
     ingredient = models.ForeignKey(Ingredient,
                                    related_name='ingredients_in_recipe',
                                    on_delete=models.CASCADE)
@@ -70,13 +66,14 @@ class RecipeIngredient(models.Model):
 
 
 class FavoriteRecipe(models.Model):
-    """" Favorited recipe """
+    """"Favorited recipe."""
     who_favorited = models.ForeignKey(User,
                                       related_name='who_favorited',
                                       on_delete=models.CASCADE)
     favorited_recipe = models.ForeignKey(Recipe,
                                          related_name='is_favorited',
                                          on_delete=models.CASCADE)
-    
+
     def __str__(self) -> str:
-        return f'{self.who_favorited} добавил в избранное {self.favorited_recipe}'
+        return (f'{self.who_favorited}'
+                f'добавил в избранное {self.favorited_recipe}')

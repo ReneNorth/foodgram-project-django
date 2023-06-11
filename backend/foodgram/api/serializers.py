@@ -1,20 +1,17 @@
-from django.contrib.auth import get_user_model
+import base64
 import logging
-from djoser.serializers import UserSerializer
-from rest_framework import serializers
-from rest_framework.validators import ValidationError
-from django.shortcuts import get_object_or_404
+
+import webcolors
+from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
-from tags.models import Tag
-from subscription.models import Subscription
+from rest_framework import serializers
+from rest_framework.validators import ValidationError
 from shopping_cart.models import InShoppingCart
+from subscription.models import Subscription
+from tags.models import Tag
 from users.serializers import CustomUserSerializer
-
-import base64
-import webcolors
-from django.core.files.base import ContentFile
-
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -30,19 +27,14 @@ class Base64ImageField(serializers.ImageField):
 
 
 class Hex2NameColor(serializers.Field):
-    # При чтении данных ничего не меняем - просто возвращаем как есть
     def to_representation(self, value):
         return value
-    # При записи код цвета конвертируется в его название
+
     def to_internal_value(self, data):
-        # Доверяй, но проверяй
         try:
-            # Если имя цвета существует, то конвертируем код в название
             data = webcolors.hex_to_name(data)
         except ValueError:
-            # Иначе возвращаем ошибку
             raise serializers.ValidationError('Для этого цвета нет имени')
-        # Возвращаем данные в новом формате
         return data
 
 

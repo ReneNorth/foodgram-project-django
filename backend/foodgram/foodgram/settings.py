@@ -7,12 +7,7 @@ from django.utils.log import DEFAULT_LOGGING
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(dotenv_path=os.path.abspath(
     os.path.join(BASE_DIR.parent, f'{os.pardir}/infra/.env')))
-
-TEST_KEY = os.getenv('TEST_KEY')
-print(TEST_KEY, '<- test key is okay')
-print(BASE_DIR)
 SECRET_KEY = os.getenv('DJANGO_KEY')
-
 LOCAL_DEV = True
 DEBUG = True
 
@@ -62,20 +57,20 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-    
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5,
     # 'DEFAULT_FILTER_BACKENDS': [
     #     'django_filters.rest_framework.DjangoFilterBackend'
-    #     ], 
+    #     ],
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r'^/api/.*$' 
+CORS_URLS_REGEX = r'^/api/.*$'
 # CORS_ALLOWED_ORIGINS = [
 #     'http://localhost:3000',
 #     'http://localhost',
-# ] 
+# ]
 
 
 INTERNAL_IPS = [
@@ -86,12 +81,8 @@ INTERNAL_IPS = [
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
-        
-        # 'user_create': 'users.serializers.UserReadOnlySerializer',
         'user_create': 'users.serializers.CustomUserSerializer',
-        # 'user': 'users.serializers.CustomUserSerializer',
-        # 'current_user': 'users.serializers.UserReadOnlySerializer', 
-        },
+    },
 }
 
 
@@ -119,7 +110,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-if LOCAL_DEV is False: 
+if LOCAL_DEV is False:
     DATABASES = {
         'default': {
             'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
@@ -143,10 +134,7 @@ if LOCAL_DEV is True:
             'PORT': os.getenv('DB_PORT_LOCAL', default='5432')
         }
     }
-print(DATABASES)
 
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -181,12 +169,10 @@ print(STATIC_ROOT)
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# MEDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# логирует сообщения в файл в /logs
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -205,9 +191,6 @@ LOGGING = {
         },
     },
 }
-
-# LOGGING_CONFIG = None
-# LOGLEVEL = os.getenv('DJ_LOGLEVEL', 'info').upper()
 
 
 DRF_API_LOGGER_DATABASE = True
