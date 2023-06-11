@@ -10,7 +10,8 @@ The website allows users to publish recipes, subscribe to other users' publicati
 - Django Rest Framework
 - PostgeSQL
 - Docker
-- Github Actions
+- Nginx
+- Gunicorn
 
 ## Features
 
