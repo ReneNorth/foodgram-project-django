@@ -32,7 +32,11 @@ class SubscriptionListCreateDestroyViewSet(mixins.DestroyModelMixin,
                                            mixins.ListModelMixin,
                                            mixins.CreateModelMixin,
                                            viewsets.GenericViewSet):
-    permission_classes = [IsAuthenticated, ]
+    """ """
+    permission_classes = [
+        IsAuthenticated,
+        # AllowAny
+        ]
 
     def get_queryset(self):
         return User.objects.filter(subscribed__user__id=self.request.user.id)
@@ -66,6 +70,7 @@ class SubscriptionListCreateDestroyViewSet(mixins.DestroyModelMixin,
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    """ """
     # queryset = Recipe.objects.all()
     queryset = Recipe.objects.annotate(test_field=Count('tags'))
     serializer_class = RecipeRetreiveDelListSerializer
@@ -83,11 +88,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
                         ]
 
     def get_serializer_class(self):
+        """
+        Returns the appropriate serializer class based on the action.
+
+        Returns:
+            Serializer: The serializer class for the current action.
+        """
         if self.action in ('retrieve', 'list', 'delete'):
             return RecipeRetreiveDelListSerializer
         return RecipeCreatePatchSerializer
 
     def create(self, request, *args, **kwargs):
+        """
+        Creates a new recipe based on the provided data.
+
+        Args:
+            request (Request): The HTTP request object.
+            args: Variable length argument list.
+            kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Response: The response containing the serialized data of the created recipe.
+        """
         user = get_object_or_404(User, id=request.user.id)
         serializer = self.get_serializer(data=request.data,
                                          context={'user': user, })
@@ -97,6 +119,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
+        """
+        Performs additional actions after creating a recipe.
+
+        Args:
+            serializer (Serializer): The serializer instance used to create the recipe.
+        """
         serializer.save(author=self.request.user)
 
 

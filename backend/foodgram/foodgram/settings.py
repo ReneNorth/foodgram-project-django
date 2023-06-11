@@ -13,7 +13,7 @@ print(TEST_KEY, '<- test key is okay')
 print(BASE_DIR)
 SECRET_KEY = os.getenv('DJANGO_KEY')
 
-LOCAL_DEV = False
+LOCAL_DEV = True
 DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'web', '127.0.0.1', 'localhost', '127.0.0.1:8000']

@@ -1,0 +1,8 @@
+POST http://127.0.0.1:8000/api/auth/token/login/ HTTP/1.1
+content-type: application/json
+# Authorization: token 3a80d663937ff7423a4b01b16175c96502525c38
+
+{
+  "password": "admin",
+  "email": "admin@admin.com"
+}

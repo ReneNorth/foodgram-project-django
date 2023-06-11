@@ -49,6 +49,7 @@ class RecipeTag(models.Model):
 
 
 class RecipeIngredient(models.Model):
+    """ Ingredients for recipes """
     ingredient = models.ForeignKey(Ingredient,
                                    related_name='ingredients_in_recipe',
                                    on_delete=models.CASCADE)
@@ -69,6 +70,7 @@ class RecipeIngredient(models.Model):
 
 
 class FavoriteRecipe(models.Model):
+    """" Favorited recipe """
     who_favorited = models.ForeignKey(User,
                                       related_name='who_favorited',
                                       on_delete=models.CASCADE)
