@@ -14,11 +14,11 @@ class RecipeTest(TestCase):
             first_name='Вася6',
             last_name='Пупкин6',
             password='Qwerty12323'
-            )
+        )
 
     def test_user_created(self):
         try:
-            User.objects.all().exists()
-            print(User.objects.all())
+            self.assertAlmostEqual(
+                User.objects.count(), 1)
         except Exception as e:
             assert False, f'{e} nope'

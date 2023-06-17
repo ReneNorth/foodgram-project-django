@@ -1,7 +1,7 @@
-from django.db import models
 from django.contrib.auth import get_user_model
-from recipe.models import Recipe
+from django.db import models
 
+from recipe.models import Recipe
 
 User = get_user_model()
 

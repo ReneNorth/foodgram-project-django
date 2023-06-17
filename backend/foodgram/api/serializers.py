@@ -4,10 +4,11 @@ import logging
 import webcolors
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
-from ingredients.models import Ingredient
-from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from rest_framework import serializers
 from rest_framework.validators import ValidationError
+
+from ingredients.models import Ingredient
+from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from shopping_cart.models import InShoppingCart
 from subscription.models import Subscription
 from tags.models import Tag
@@ -59,7 +60,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeIngredient
         fields = [
-                  'ingredient',  # переименовать поле на id?
+                  # 'ingredient',
                   'name',
                   'measurement_unit',
                   'amount',
@@ -71,10 +72,13 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
     # TODO оптимизация через related?
     def get_name(self, obj):
-        return Ingredient.objects.get(id=obj.ingredient.id).name
+        return Ingredient.objects.get(id=obj.id).name
+        # return Ingredient.objects.get(id=obj.ingredient.id).name prev vers
 
     def get_measurement_unit(self, obj):
-        return Ingredient.objects.get(id=obj.ingredient.id).measurement_unit
+        return Ingredient.objects.get(id=obj.id).measurement_unit
+        # return Ingredient.objects.get(id=obj.ingredient.id).measurement_unit
+        # prev vers
 
 
 class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):

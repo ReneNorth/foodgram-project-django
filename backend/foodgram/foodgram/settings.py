@@ -1,14 +1,14 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
 from django.utils.log import DEFAULT_LOGGING
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(dotenv_path=os.path.abspath(
-    os.path.join(BASE_DIR.parent, f'{os.pardir}/infra/.env')))
+    os.path.join(BASE_DIR.parent, f'{os.pardir}/food_infra/.env')))
 SECRET_KEY = os.getenv('DJANGO_KEY')
-LOCAL_DEV = False
+LOCAL_DEV = True
 DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'web', '127.0.0.1', 'localhost', '127.0.0.1:8000']
@@ -135,7 +135,6 @@ if LOCAL_DEV is True:
         }
     }
 
-print(DATABASES)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -164,7 +163,6 @@ USE_TZ = True
 
 STATIC_URL = '/django_static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'django_static')
-print(STATIC_ROOT)
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
