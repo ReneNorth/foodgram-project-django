@@ -142,3 +142,7 @@ dmypy.json
 .idea
 
 
+# Project specific 
+
+my_temp_practicum.py
+

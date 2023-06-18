@@ -68,20 +68,14 @@ class SubscriptionListCreateDestroyViewSet(
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.annotate(test_field=Count("tags"))
+    queryset = Recipe.objects.all()
     serializer_class = RecipeRetreiveDelListSerializer
-    pagination_class = LimitOffsetPagination
     pagination_class = LimitOffsetPagination
     filterset_class = RecipeFilter
     permission_classes = [
         AllowAny,
     ]
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-
-    filterset_fields = [
-        "author__id",
-        "tags__slug",
-    ]
 
     def get_serializer_class(self):
         """

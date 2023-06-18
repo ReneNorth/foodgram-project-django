@@ -5,7 +5,8 @@ from recipe.models import Recipe
 
 class RecipeFilter(django_filters.FilterSet):
     author = django_filters.CharFilter(field_name='author__id')
-    tags = django_filters.CharFilter(field_name='tags__slug')
+    tags = django_filters.filters.AllValuesMultipleFilter(
+        field_name='tags__slug')
     is_favorited = django_filters.NumberFilter(field_name='is_favorited',
                                                method='filter_is_favorited')
     is_in_shopping_cart = django_filters.NumberFilter(
@@ -22,8 +23,8 @@ class RecipeFilter(django_filters.FilterSet):
     class Meta:
         model = Recipe
         fields = [
-                  'tags',
-                  'author',
-                  'is_favorited',
-                  'is_in_shopping_cart',
-                  ]
+            'tags',
+            'author',
+            'is_favorited',
+            'is_in_shopping_cart',
+        ]

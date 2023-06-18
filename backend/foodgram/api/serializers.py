@@ -60,11 +60,11 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeIngredient
         fields = [
-                  # 'ingredient',
-                  'name',
-                  'measurement_unit',
-                  'amount',
-                  ]
+            # 'ingredient',
+            'name',
+            'measurement_unit',
+            'amount',
+        ]
         extra_kwargs = {
             'measurement_unit': {'read_only': True},
             'name': {'read_only': True},
@@ -86,7 +86,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer()
     is_in_shopping_cart = serializers.SerializerMethodField()
     # is_subscribed = serializers.SerializerMethodField()
-    test_field = serializers.IntegerField()
+    # test_field = serializers.IntegerField()
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
@@ -109,7 +109,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ['id', 'tags', 'author', 'ingredients',
                   'is_favorited',
-                  'test_field',
+                  #   'test_field',
                   'is_in_shopping_cart',
                   'name', 'image', 'text',
                   'cooking_time', ]
@@ -125,7 +125,7 @@ class RecipeLightSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'image',
             'cooking_time'
-            ]
+        ]
 
 
 class RecipeCreatePatchSerializer(serializers.ModelSerializer):
