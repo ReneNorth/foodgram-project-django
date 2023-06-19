@@ -15,7 +15,6 @@ RECIPE1_NAME = 'test_recipe1'
 RECIPE2_NAME = 'test_recipe2'
 TAG1_SLUG = 'black'
 TAG2_SLUG = 'green'
-# recipe1_name
 
 
 class RecipeApiTest(TestCase):
@@ -23,9 +22,26 @@ class RecipeApiTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.guest_client = Client()
-        cls.user = User.objects.create(
-
+        cls.authorized_user1 = User.objects.create(
+            username='username_authorized',
+            role='user',
+            first_name='user_first',
+            last_name='user_last',
+            email='user1@user.com'
         )
+        cls.authorized_client1 = Client()
+        cls.authorized_client1.force_login(cls.authorized_user1)
+
+        cls.authorized_user2 = User.objects.create(
+            username='username_authorized2',
+            role='user2',
+            first_name='user_first2',
+            last_name='user_last2',
+            email='user2@user.com'
+        )
+        cls.authorized_client2 = Client()
+        cls.authorized_client2.force_login(cls.authorized_user2)
+
         cls.factory = APIRequestFactory()
         cls.tag1 = Tag.objects.create(
             name=TAG1_NAME,
@@ -47,7 +63,7 @@ class RecipeApiTest(TestCase):
         )
 
         cls.recipe1 = Recipe.objects.create(
-            author=cls.user,
+            author=cls.authorized_user1,
             name=RECIPE1_NAME,
             text='test text1',
             cooking_time=10,
@@ -58,7 +74,7 @@ class RecipeApiTest(TestCase):
             [Ingredient.objects.get(name='test_ingredient1').id])
 
         cls.recipe2 = Recipe.objects.create(
-            author=cls.user,
+            author=cls.authorized_user1,
             name=RECIPE2_NAME,
             text='test text2',
             cooking_time=10,
@@ -69,6 +85,10 @@ class RecipeApiTest(TestCase):
             [Ingredient.objects.get(name='test_ingredient2').id])
 
     def setUp(self) -> None:
+        pass
+
+    @classmethod
+    def tearDownClass(cls):
         pass
 
     def test_recipe_created(self):
@@ -106,3 +126,23 @@ class RecipeApiTest(TestCase):
             content_type='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['count'], 2)
+
+    def user_crerated(self):
+        self.assertAlmostEqual(User.objects.count(), 2)
+
+    def test_favorite(self):
+        recipe_id = Recipe.objects.get(name=RECIPE1_NAME).id
+        response = self.authorized_client2.post(
+            f'/api/recipes/{recipe_id}/favorite/',
+            content_type='application/json')
+        print(response.request)
+        print(dir(response))
+        self.assertEqual(response.status_code, 201)
+
+        response = self.authorized_client2.delete(
+            f'/api/recipes/{recipe_id}/favorite/',
+            content_type='application/json')
+        self.assertEqual(response.status_code, 204)
+
+    def test_recipe_create_api(self):
+        pass

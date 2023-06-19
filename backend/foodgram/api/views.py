@@ -14,6 +14,7 @@ from shopping_cart.models import InShoppingCart
 from subscription.models import Subscription
 from tags.models import Tag
 from users.permissions import RecipePermission
+from api.permissions import IsAuthorOrReadOnly
 
 from .filters import RecipeFilter
 from .serializers import (FavoriteSerializer, IngredientSerializer,
@@ -73,7 +74,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     filterset_class = RecipeFilter
     permission_classes = [
-        AllowAny,
+        IsAuthorOrReadOnly,
     ]
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
 

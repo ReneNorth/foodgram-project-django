@@ -87,13 +87,16 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     is_in_shopping_cart = serializers.SerializerMethodField()
     # is_subscribed = serializers.SerializerMethodField()
     # test_field = serializers.IntegerField()
+    is_favorited = serializers.SerializerMethodField()
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
 
     def get_is_favorited(self, recipe):
-        user_id = self.context.get('request').user.id
-        if FavoriteRecipe.objects.filter(who_favorited__id=user_id,
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        if FavoriteRecipe.objects.filter(who_favorited__id=user.id,
                                          favorited_recipe=recipe).exists():
             return True
         return False
@@ -109,7 +112,6 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ['id', 'tags', 'author', 'ingredients',
                   'is_favorited',
-                  #   'test_field',
                   'is_in_shopping_cart',
                   'name', 'image', 'text',
                   'cooking_time', ]
