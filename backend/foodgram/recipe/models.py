@@ -31,7 +31,8 @@ class Recipe(models.Model):
     image = models.ImageField(
         upload_to='recipes/', null=True, default=None)
     tags = models.ManyToManyField(Tag, through='RecipeTag')
-    ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredient')
+    ingredients = models.ManyToManyField(
+        Ingredient, through='RecipeIngredient')
 
     def __str__(self) -> str:
         return f'id {self.id}: {self.name[:10]}'

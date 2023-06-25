@@ -85,8 +85,6 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     """ """
     author = CustomUserSerializer()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    # is_subscribed = serializers.SerializerMethodField()
-    # test_field = serializers.IntegerField()
     is_favorited = serializers.SerializerMethodField()
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
@@ -110,15 +108,12 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ['id', 'tags', 'author', 'ingredients',
-                  'is_favorited',
-                  'is_in_shopping_cart',
-                  'name', 'image', 'text',
+        fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
+                  'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time', ]
         read_only_fields = ['id', 'tags', 'author', 'ingredients',
-                            'is_favorited',
-                            'is_in_shopping_cart', 'name', 'image', 'text',
-                            'cooking_time', ]
+                            'is_favorited', 'is_in_shopping_cart', 'name',
+                            'image', 'text', 'cooking_time', ]
 
 
 class RecipeLightSerializer(serializers.ModelSerializer):
@@ -148,11 +143,9 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
-
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         user = self.context['user']
-
         instance = Recipe.objects.create(author=user, **validated_data)
         instance.tags.set(tags)
         instance.save()

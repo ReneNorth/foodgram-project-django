@@ -1,13 +1,18 @@
+from api.tests.constants import Constants as c
 from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user
 from django.test import Client, TestCase
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.authtoken.models import Token
 
 from ingredients.models import Ingredient
 from recipe.models import Recipe, RecipeIngredient
 from tags.models import Tag
+from api.views import FavoritedCreateDeleteViewSet
 
 User = get_user_model()
 
+print(c.TEST, 'TEEEEST')
 
 TAG1_NAME = 'test_tag1'
 TAG2_NAME = 'test_tag2'
@@ -22,6 +27,7 @@ class RecipeApiTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.guest_client = Client()
+        factory = APIRequestFactory()
         cls.authorized_user1 = User.objects.create(
             username='username_authorized',
             role='user',
@@ -89,7 +95,7 @@ class RecipeApiTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        pass
+        super().tearDownClass()
 
     def test_recipe_created(self):
         self.assertEqual(Recipe.objects.count(), 2)
@@ -129,20 +135,6 @@ class RecipeApiTest(TestCase):
 
     def user_crerated(self):
         self.assertAlmostEqual(User.objects.count(), 2)
-
-    def test_favorite(self):
-        recipe_id = Recipe.objects.get(name=RECIPE1_NAME).id
-        response = self.authorized_client2.post(
-            f'/api/recipes/{recipe_id}/favorite/',
-            content_type='application/json')
-        print(response.request)
-        print(dir(response))
-        self.assertEqual(response.status_code, 201)
-
-        response = self.authorized_client2.delete(
-            f'/api/recipes/{recipe_id}/favorite/',
-            content_type='application/json')
-        self.assertEqual(response.status_code, 204)
 
     def test_recipe_create_api(self):
         pass

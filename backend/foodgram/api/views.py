@@ -89,6 +89,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeRetreiveDelListSerializer
         return RecipeCreatePatchSerializer
 
+    # @action(detail=False, methods=['post', ], url_path='/'
+        # permission_classes=[IsAuthenticated],
+        # )
     def create(self, request, *args, **kwargs):
         """
         Creates a new recipe based on the provided data.
