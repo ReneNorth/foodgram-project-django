@@ -16,6 +16,7 @@ from users.serializers import CustomUserSerializer
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 class Base64ImageField(serializers.ImageField):
@@ -129,7 +130,7 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all())
     ingredients = RecipeIngredientSerializer(many=True)
-    image = Base64ImageField(required=False, allow_null=True)
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
@@ -138,20 +139,22 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
             'ingredients', 'image']
 
     def get_user(self, obj):
+        log.warning(self, obj)
         if 'user' in self.context:
             return self.context['user']
         return None
 
-    def create(self, validated_data):
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        user = self.context['user']
-        instance = Recipe.objects.create(author=user, **validated_data)
-        instance.tags.set(tags)
-        instance.save()
-        for ingredient in ingredients:
-            RecipeIngredient.objects.create(recipe=instance, **ingredient)
-        return instance
+    # def create(self, validated_data):
+    #     log.warning(self, validated_data)
+    #     ingredients = validated_data.pop('ingredients')
+    #     tags = validated_data.pop('tags')
+    #     user = self.context['user']
+    #     instance = Recipe.objects.create(author=user, **validated_data)
+    #     instance.tags.set(tags)
+    #     instance.save()
+    #     for ingredient in ingredients:
+    #         RecipeIngredient.objects.create(recipe=instance, **ingredient)
+    #     return instance
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

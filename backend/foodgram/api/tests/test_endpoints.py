@@ -14,6 +14,8 @@ User = get_user_model()
 
 print(c.TEST, 'TEEEEST')
 
+
+# вынести в constants
 TAG1_NAME = 'test_tag1'
 TAG2_NAME = 'test_tag2'
 RECIPE1_NAME = 'test_recipe1'

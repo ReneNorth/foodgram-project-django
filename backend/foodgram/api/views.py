@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Count
+import logging
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
@@ -25,6 +26,9 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
                           SubscriptionListSerializer, TagSerializer)
 
 User = get_user_model()
+
+logging.basicConfig(format='%(message)s')
+log = logging.getLogger(__name__)
 
 
 class SubscriptionListCreateDestroyViewSet(
@@ -70,13 +74,12 @@ class SubscriptionListCreateDestroyViewSet(
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeRetreiveDelListSerializer
+    serializer_class = RecipeCreatePatchSerializer
     pagination_class = LimitOffsetPagination
     filterset_class = RecipeFilter
     permission_classes = [
         IsAuthorOrReadOnly,
     ]
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
 
     def get_serializer_class(self):
         """
@@ -85,14 +88,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
         Returns:
             Serializer: The serializer class for the current action.
         """
-        if self.action in ("retrieve", "list", "delete"):
+        if self.action in ('retrieve', 'list', 'destroy'):
+            log.warning(self.action)
             return RecipeRetreiveDelListSerializer
-        return RecipeCreatePatchSerializer
+        if self.action in ('create', 'update'):
+            log.warning(self.action)
+            log.warning(RecipeCreatePatchSerializer)
+            return RecipeCreatePatchSerializer
 
-    # @action(detail=False, methods=['post', ], url_path='/'
-        # permission_classes=[IsAuthenticated],
-        # )
     def create(self, request, *args, **kwargs):
+        log.warning(self)
         """
         Creates a new recipe based on the provided data.
 
@@ -118,6 +123,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
+        log.warning(self)
         """
         Performs additional actions after creating a recipe.
 
@@ -128,6 +134,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def partial_update(self, request, *args, **kwargs):
+        log.warning(self)
         instance = self.get_object()
         serializer = self.get_serializer(
             instance, data=request.data, partial=True)
