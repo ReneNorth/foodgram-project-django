@@ -89,15 +89,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             Serializer: The serializer class for the current action.
         """
         if self.action in ('retrieve', 'list', 'destroy'):
-            log.warning(self.action)
             return RecipeRetreiveDelListSerializer
-        if self.action in ('create', 'update'):
-            log.warning(self.action)
-            log.warning(RecipeCreatePatchSerializer)
-            return RecipeCreatePatchSerializer
+        return RecipeCreatePatchSerializer
 
     def create(self, request, *args, **kwargs):
-        log.warning(self)
         """
         Creates a new recipe based on the provided data.
 
@@ -110,20 +105,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
             Response: The response containing the serialized
             data of the created recipe.
         """
-        user = get_object_or_404(User, id=request.user.id)
         serializer = self.get_serializer(
             data=request.data,
             context={
-                "user": user,
+                "user": request.user,
             },
         )
+
+        log.warning('test warn')
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
-        log.warning(self)
         """
         Performs additional actions after creating a recipe.
 

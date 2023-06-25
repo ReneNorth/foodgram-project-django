@@ -144,17 +144,24 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
             return self.context['user']
         return None
 
-    # def create(self, validated_data):
-    #     log.warning(self, validated_data)
-    #     ingredients = validated_data.pop('ingredients')
-    #     tags = validated_data.pop('tags')
-    #     user = self.context['user']
-    #     instance = Recipe.objects.create(author=user, **validated_data)
-    #     instance.tags.set(tags)
-    #     instance.save()
-    #     for ingredient in ingredients:
-    #         RecipeIngredient.objects.create(recipe=instance, **ingredient)
-    #     return instance
+    def create(self, validated_data):
+        log.warning(f'{self} {validated_data}')
+
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        user = self.context['user']
+        try:
+            if user.is_authenticated:
+                print('true')
+                instance = Recipe.objects.create(author=user, **validated_data)
+                instance.tags.set(tags)
+                instance.save()
+                for ingredient in ingredients:
+                    RecipeIngredient.objects.create(
+                        recipe=instance, **ingredient)
+                return instance
+        except Exception as er:
+            raise serializers.ValidationError(f'{er}')
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
