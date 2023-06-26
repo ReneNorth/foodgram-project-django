@@ -24,6 +24,6 @@ urlpatterns = [
          InShoppingCartCreateDeleteViewSet.as_view({'post': 'create',
                                                     'delete': 'destroy'})),
     path('', include(router1.urls)),
-    path(r'auth/', include('djoser.urls')),
-    path(r'auth/', include('djoser.urls.authtoken')),
+    path('', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
 ]

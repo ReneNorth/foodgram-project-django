@@ -105,13 +105,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
             Response: The response containing the serialized
             data of the created recipe.
         """
+        log.warning('__req data__')
+        log.warning(request.data)
+
         serializer = self.get_serializer(
             data=request.data,
             context={
                 "user": request.user,
             },
         )
-
+        log.warning(serializer)
         log.warning('test warn')
         if serializer.is_valid(raise_exception=True):
             serializer.save()
