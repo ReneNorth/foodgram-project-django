@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Count
+import logging
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
@@ -26,15 +27,16 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
 
 User = get_user_model()
 
+logging.basicConfig(format='%(message)s')
+log = logging.getLogger(__name__)
+
 
 class SubscriptionListCreateDestroyViewSet(
-    mixins.DestroyModelMixin,
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet,
-):
+        mixins.DestroyModelMixin,
+        mixins.ListModelMixin,
+        mixins.CreateModelMixin,
+        viewsets.GenericViewSet):
     """ """
-
     permission_classes = [
         IsAuthenticated,
     ]
@@ -70,13 +72,13 @@ class SubscriptionListCreateDestroyViewSet(
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeRetreiveDelListSerializer
+    serializer_class = RecipeCreatePatchSerializer
     pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     permission_classes = [
         IsAuthorOrReadOnly,
     ]
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
 
     def get_serializer_class(self):
         """
@@ -85,13 +87,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         Returns:
             Serializer: The serializer class for the current action.
         """
-        if self.action in ("retrieve", "list", "delete"):
+        if self.action in ('retrieve', 'list', 'destroy'):
             return RecipeRetreiveDelListSerializer
         return RecipeCreatePatchSerializer
 
-    # @action(detail=False, methods=['post', ], url_path='/'
-        # permission_classes=[IsAuthenticated],
-        # )
     def create(self, request, *args, **kwargs):
         """
         Creates a new recipe based on the provided data.
@@ -105,11 +104,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             Response: The response containing the serialized
             data of the created recipe.
         """
-        user = get_object_or_404(User, id=request.user.id)
         serializer = self.get_serializer(
             data=request.data,
             context={
-                "user": user,
+                "user": request.user,
             },
         )
         if serializer.is_valid(raise_exception=True):

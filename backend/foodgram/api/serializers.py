@@ -16,6 +16,7 @@ from users.serializers import CustomUserSerializer
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 class Base64ImageField(serializers.ImageField):
@@ -54,29 +55,31 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-    measurement_unit = serializers.SerializerMethodField()
+    # name = serializers.SerializerMethodField()
+    # measurement_unit = serializers.SerializerMethodField()
 
     class Meta:
         model = RecipeIngredient
         fields = [
             # 'ingredient',
-            'name',
-            'measurement_unit',
+            'id',
+            # 'name',
+            # 'measurement_unit',
             'amount',
         ]
         extra_kwargs = {
-            'measurement_unit': {'read_only': True},
-            'name': {'read_only': True},
+            # 'measurement_unit': {'read_only': True},
+            # 'name': {'read_only': True},
+            'id': {'read_only': False},
         }
 
     # TODO оптимизация через related?
-    def get_name(self, obj):
-        return Ingredient.objects.get(id=obj.id).name
+    # def get_name(self, obj):
+    #     return Ingredient.objects.get(id=obj.id).name
         # return Ingredient.objects.get(id=obj.ingredient.id).name prev vers
 
-    def get_measurement_unit(self, obj):
-        return Ingredient.objects.get(id=obj.id).measurement_unit
+    # def get_measurement_unit(self, obj):
+    #     return Ingredient.objects.get(id=obj.id).measurement_unit
         # return Ingredient.objects.get(id=obj.ingredient.id).measurement_unit
         # prev vers
 
@@ -86,6 +89,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer()
     is_in_shopping_cart = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
+    # ingredients = IngredientSerializer(many=True)
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
@@ -111,6 +115,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time', ]
+        # do I need this?
         read_only_fields = ['id', 'tags', 'author', 'ingredients',
                             'is_favorited', 'is_in_shopping_cart', 'name',
                             'image', 'text', 'cooking_time', ]
@@ -129,7 +134,7 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all())
     ingredients = RecipeIngredientSerializer(many=True)
-    image = Base64ImageField(required=False, allow_null=True)
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
@@ -146,12 +151,19 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         user = self.context['user']
-        instance = Recipe.objects.create(author=user, **validated_data)
-        instance.tags.set(tags)
-        instance.save()
-        for ingredient in ingredients:
-            RecipeIngredient.objects.create(recipe=instance, **ingredient)
-        return instance
+        try:
+            if user.is_authenticated:
+                instance = Recipe.objects.create(author=user, **validated_data)
+                instance.tags.set(tags)
+                instance.save()
+                for ingredient in ingredients:
+                    RecipeIngredient.objects.create(
+                        ingredient_id=ingredient['id'],
+                        recipe_id=instance.id,
+                        amount=ingredient['amount'])
+                return instance
+        except Exception as er:
+            raise serializers.ValidationError(f'{er}')
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -191,13 +203,13 @@ class InShoppingCartSerializer(serializers.ModelSerializer):
     recipe_in_cart = serializers.SerializerMethodField()
 
     def get_user(self, obj):
-        if "user" in self.context:
-            return self.context["user"].id
+        if 'user' in self.context:
+            return self.context['user'].id
         return None
 
     def get_recipe_in_cart(self, obj):
-        if "recipe_in_cart" in self.context:
-            return self.context["recipe_in_cart"].id
+        if 'recipe_in_cart' in self.context:
+            return self.context['recipe_in_cart'].id
         return None
 
     class Meta:

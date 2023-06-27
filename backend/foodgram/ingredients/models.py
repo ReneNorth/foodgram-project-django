@@ -6,4 +6,4 @@ class Ingredient(models.Model):
     measurement_unit = models.CharField(max_length=20)
 
     def __str__(self):
-        return f'{self.name} в {self.measurement_unit}'
+        return f'id {self.id}: {self.name} в {self.measurement_unit}'

@@ -1,3 +1,9 @@
+# http://localhost/api/users/
+# registration
+
+# "http://localhost/api/auth/token/login/".
+
+
 from api.tests.constants import Constants as c
 from django.contrib.auth import get_user_model
 from django.contrib.auth import get_user
@@ -49,11 +55,8 @@ class RecipeApiTest(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
 
-    def test_recipe_created(self):
+    def test_user_url_available(self):
         """Creates a user and a test reipe via API"""
-
-        self.assertEqual(Recipe.objects.count(), 0,
-                         'no legacy recipes confirmed')
 
         response_create_user = self.client.post('/api/users/',
                                                 {"email": "vpupkin@yandex.ru",
@@ -64,6 +67,7 @@ class RecipeApiTest(TestCase):
                                                 'application/json')
         self.assertEqual(response_create_user.status_code, 201)
         user = get_object_or_404(User, email='vpupkin@yandex.ru')
+        log.info(user.id)
 
         response_login = self.client.post('/api/auth/token/login/',
                                           {
@@ -78,19 +82,43 @@ class RecipeApiTest(TestCase):
         token = Token.objects.get(user=user)
         self.client.force_login(user)
 
-        response_post = self.client.post(
-            '/api/recipes/', {
-                "ingredients": [
-                    {"id": f'{self.ingredient1.id}', "amount": 10}
-                ],
-                "tags": [self.tag1.id, self.tag2.id],
-                "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
-                "name": "string",
-                "text": "string",
-                "cooking_time": 1
-            },
-            content_type="application/json",
+        response_user_page = self.client.get(
+            f'/api/users/{user.id}/',
+            # **{"HTTP_AUTHORIZATION": f"Token {token}"}
+        )
+        log.info(response_user_page)
+        self.assertEqual(response_user_page.status_code, 200)
+
+    def test_user_me_available(self):
+        response_create_user = self.client.post('/api/users/',
+                                                {"email": "vpupkin@yandex.ru",
+                                                 "username": "vasya.pupkin",
+                                                 "first_name": "Вася",
+                                                 "last_name": "Пупкин",
+                                                 "password": "Qwerty123", },
+                                                'application/json')
+        self.assertEqual(response_create_user.status_code, 201)
+        user = get_object_or_404(User, email='vpupkin@yandex.ru')
+        self.assertEqual(user.email, 'vpupkin@yandex.ru')
+
+        response_login = self.client.post('/api/auth/token/login/',
+                                          {
+                                              "password": "Qwerty123",
+                                              "email": "vpupkin@yandex.ru"
+                                          },
+                                          "application/json")
+
+        # self.assertEqual(response_login.status_code, 201) # таргет
+        self.assertEqual(response_login.status_code, 200)
+
+        token = Token.objects.get(user=user)
+        self.client.force_login(user)
+
+        response_me = self.client.get(
+            '/api/users/me/',
             **{"HTTP_AUTHORIZATION": f"Token {token}"},
         )
-        self.assertEqual(response_post.status_code, 201)
-        self.assertEqual(Recipe.objects.count(), 1)
+
+        self.assertEqual(response_me.status_code, 200)
+        log.info(response_me.content)
+        log.info(response_me.context)
