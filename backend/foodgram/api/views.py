@@ -5,9 +5,9 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from api.pagination import CustomPagination
 
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe
@@ -37,9 +37,8 @@ class SubscriptionListCreateDestroyViewSet(
         mixins.CreateModelMixin,
         viewsets.GenericViewSet):
     """ """
-    permission_classes = [
-        IsAuthenticated,
-    ]
+    permission_classes = [IsAuthenticated, ]
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         return User.objects.filter(subscribed__user__id=self.request.user.id)
@@ -73,7 +72,7 @@ class SubscriptionListCreateDestroyViewSet(
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeCreatePatchSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     permission_classes = [
@@ -208,7 +207,6 @@ class InShoppingCartCreateDeleteViewSet(
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # TODO проверить не лишний ли декторатор
     @action(methods=["delete"], detail=False)
     def destroy(self, request, pk=None) -> Response:
         recipe_in_cart = get_object_or_404(

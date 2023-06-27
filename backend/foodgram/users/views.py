@@ -1,14 +1,20 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from rest_framework import filters, status, viewsets
+from djoser.views import UserViewSet
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import status
+from recipe.models import Recipe
+from subscription.models import Subscription
 
 # from .models import User
 from users.permissions import CreateListUsersPermission
 from users.serializers import CustomUserSerializer
+from api.serializers import RecipeRetreiveDelListSerializer
+from api.pagination import CustomPagination
 import logging
 
 User = get_user_model()
@@ -17,7 +23,7 @@ logger = logging.getLogger(__name__)
 log = logging.getLogger(__name__)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class CustomizedUserViewSet(UserViewSet):
     # permission_classes = [CreateListUsersPermission, IsAuthenticated]
     permission_classes = [AllowAny, IsAuthenticated, ]
     queryset = User.objects.all()
@@ -32,12 +38,25 @@ class UserViewSet(viewsets.ModelViewSet):
             permission_classes=[IsAuthenticated, ],
             url_path='me',)
     def get_me(self, request):
-        log.info(request)
         user = get_object_or_404(User, pk=request.user.pk)
         serializer = self.get_serializer(user)
-        log.info(serializer)
-        log.info(f'this was serialized, {serializer.data}')
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False,
+            url_path='subscriptions',
+            serializer_class=RecipeRetreiveDelListSerializer,
+            permission_classes=[IsAuthenticated, ],
+            pagination_class=CustomPagination)
+    def get_subscriptions(self, request):
+        log.info(dir(request))
+        log.info(f'request.user: {request.user}')
+        recipes = Recipe.objects.filter(
+            author__subscribed__user=request.user).order_by('-pub_date')
+        log.info(recipes)
+        # serializer = RecipeRetreiveDelListSerializer(
+        #     Recipe.objects.filter(author=request.user), many=True)
+        return Response(self.get_serializer(recipes, many=True).data,
+                        status=status.HTTP_200_OK)
 
 
 # class CustomUserViewSet(UserViewSet):

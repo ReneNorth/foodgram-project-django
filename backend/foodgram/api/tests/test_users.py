@@ -1,22 +1,12 @@
-# http://localhost/api/users/
-# registration
-
-# "http://localhost/api/auth/token/login/".
-
-
 from api.tests.constants import Constants as c
-from django.contrib.auth import get_user_model
-from django.contrib.auth import get_user
+from django.contrib.auth import get_user_model, get_user
 from django.test import Client, TestCase
-from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 import logging
 
 from ingredients.models import Ingredient
-from recipe.models import Recipe, RecipeIngredient
 from tags.models import Tag
-from api.views import FavoritedCreateDeleteViewSet
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -67,8 +57,6 @@ class RecipeApiTest(TestCase):
                                                 'application/json')
         self.assertEqual(response_create_user.status_code, 201)
         user = get_object_or_404(User, email='vpupkin@yandex.ru')
-        log.info(user.id)
-
         response_login = self.client.post('/api/auth/token/login/',
                                           {
                                               "password": "Qwerty123",
@@ -86,7 +74,6 @@ class RecipeApiTest(TestCase):
             f'/api/users/{user.id}/',
             # **{"HTTP_AUTHORIZATION": f"Token {token}"}
         )
-        log.info(response_user_page)
         self.assertEqual(response_user_page.status_code, 200)
 
     def test_user_me_available(self):
@@ -118,7 +105,11 @@ class RecipeApiTest(TestCase):
             '/api/users/me/',
             **{"HTTP_AUTHORIZATION": f"Token {token}"},
         )
-
         self.assertEqual(response_me.status_code, 200)
-        log.info(response_me.content)
-        log.info(response_me.context)
+
+        response_subscriptions = self.client.get(
+            '/api/users/subscriptions/',
+            **{"HTTP_AUTHORIZATION": f"Token {token}"},
+        )
+        # создать второго юзера и на него подписать первого юзера
+        self.assertEqual(response_subscriptions.status_code, 200)

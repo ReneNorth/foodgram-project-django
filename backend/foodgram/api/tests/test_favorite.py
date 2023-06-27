@@ -136,51 +136,7 @@ class RecipeApiTest(TestCase):
 
     def test_favorite(self):
         """Unfinished"""
-
-        # view = FavoritedCreateDeleteViewSet.as_view({'post': 'create'})
-        # recipe_id = Recipe.objects.get(name=RECIPE1_NAME).id
-        # print(recipe_id)
-        # print(self.authorized_user2)
-        # request = self.factory.post('/api/recipes/1/favorite/')
-        # force_authenticate(request, user=self.authorized_user2,
-        #                    )
-        # response = view(request)
-
-        # print(response.status_code, 201)
-        # self.assertEqual(response.status_code, 201)
-
-        # view = FavoritedCreateDeleteViewSet.as_view({'post': 'create'})
-        # recipe_id = Recipe.objects.get(name=RECIPE1_NAME).id
-        # print(recipe_id)
-        # print(self.authorized_user2)
-        # request = self.factory.post('/api/recipes/1/favorite/')
-        # force_authenticate(request, user=self.authorized_user2,
-        #                    token=self.authorized_user2.auth)
-        # response = view(request)
-
-        # print(response.status_code, 201)
-        # self.assertEqual(response.status_code, 201)
-        # recipe_id = Recipe.objects.get(name=RECIPE1_NAME).id
-        # self.authorized_client2.force_login(user=self.authorized_user2)
-        # self.client.login(username='fred', password='secret')
-        # print(get_user(self.authorized_client2).is_authenticated)
-        # self.assertTrue(get_user(self.authorized_client2).is_authenticated)
-
-        # token = Token.objects.get(
-        #     user=self.authorized_user2)
-        # print(token)
-        # self.authorized_client2.credentials(
-        #     HTTP_AUTHORIZATION='Token ' + token.key)
-
-        # response = self.authorized_client2.post(
-        #     f'/api/recipes/{recipe_id}/favorite/',
-        #     content_type='application/json',
-        # )
-        # print(dir(response))
-        # print(response.status_text)
-        # self.assertEqual(response.status_code, 201)
-
-        # response = self.authorized_client2.delete(
-        #     f'/api/recipes/{recipe_id}/favorite/',
-        #     content_type='application/json')
-        # self.assertEqual(response.status_code, 204)
+        # log.info(User.objects.all())
+        log.info(
+            'Техдлог по нписание тестов: проверка создания подписки и эндпоинта api/users/subscriptions. Возможно, есть простой способ создать юзера в текстурах [через эндпоинт ] и сохранить его на весь период тестирования')
+        # код в /my_temp

@@ -18,12 +18,7 @@ class RecipeFilter(django_filters.FilterSet):
         method='filter_is_in_shopping_cart')
 
     def filter_author(self, queryset, *args):
-        log.info(f'working here {dir(self)}')
-        log.info(queryset)
-        log.info(f'working here request {dir(self.request)}')
         user = self.request.query_params.get('author')
-        log.info(f'working here request {print(user)}')
-
         if user == 'me':
             return queryset.filter(author=self.request.user)
         return queryset.filter(author_id=user)

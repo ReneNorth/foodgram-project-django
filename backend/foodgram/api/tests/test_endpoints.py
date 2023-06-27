@@ -131,7 +131,6 @@ class RecipeApiTest(TestCase):
 
     def test_recipe_filter_2_tags(self):
         """Checks that a query with two tags returns 2 elements"""
-        log.info(f'no of recipes in the database: {Recipe.objects.count()}')
         response = self.guest_client.get(
             f'/api/recipes/?page=1&limit=6&tags={TAG1_SLUG}&tags={TAG2_SLUG}',
             content_type='application/json')

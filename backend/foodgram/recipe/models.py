@@ -33,13 +33,15 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(Tag, through='RecipeTag')
     ingredients = models.ManyToManyField(
         Ingredient, through='RecipeIngredient')
+    pub_date = models.DateField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f'id {self.id}: {self.name[:10]}'
 
 
 class RecipeTag(models.Model):
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='tags')
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE,
+                            related_name='tags', unique=True)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
     def __str__(self):
