@@ -12,7 +12,7 @@ router1 = routers.DefaultRouter()
 router1.register(r'ingredients', IngredientsReadOnlyViewSet)
 router1.register(r'recipes', RecipeViewSet)
 router1.register(r'tags', TagsReadOnlyViewSet)
-router1.register(r'users', UserViewSet)
+router1.register('users', UserViewSet)
 router1.register('users/subscriptions',
                  SubscriptionListCreateDestroyViewSet,
                  'subscriptions')
@@ -30,4 +30,5 @@ urlpatterns = [
     path('', include(router1.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
+    path('api-auth/', include('rest_framework.urls')),  # for DRF Browsable API
 ]

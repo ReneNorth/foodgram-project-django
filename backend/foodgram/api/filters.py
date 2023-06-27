@@ -1,10 +1,14 @@
 import django_filters
 
 from recipe.models import Recipe
+import logging
+logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 class RecipeFilter(django_filters.FilterSet):
-    author = django_filters.CharFilter(field_name='author__id')
+    author = django_filters.CharFilter(
+        field_name='author__id', method='filter_author')
     tags = django_filters.filters.AllValuesMultipleFilter(
         field_name='tags__slug')
     is_favorited = django_filters.NumberFilter(field_name='is_favorited',
@@ -12,6 +16,17 @@ class RecipeFilter(django_filters.FilterSet):
     is_in_shopping_cart = django_filters.NumberFilter(
         field_name='is_in_shopping_cart',
         method='filter_is_in_shopping_cart')
+
+    def filter_author(self, queryset, *args):
+        log.info(f'working here {dir(self)}')
+        log.info(queryset)
+        log.info(f'working here request {dir(self.request)}')
+        user = self.request.query_params.get('author')
+        log.info(f'working here request {print(user)}')
+
+        if user == 'me':
+            return queryset.filter(author=self.request.user)
+        return queryset.filter(author_id=user)
 
     def filter_is_in_shopping_cart(self, queryset, *args):
         return queryset.filter(is_in_cart__user=self.request.user,

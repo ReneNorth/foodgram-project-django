@@ -1,10 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
+import logging
 
 from subscription.models import Subscription
 
 User = get_user_model()
+
+logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -22,6 +26,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         """Checks if the user is supscribed to the recipe's author"""
+        log.info(f'user obj: {obj}')
         user_id = self.context.get('request').user.id
         if Subscription.objects.filter(user_id=user_id,
                                        author=obj).exists():

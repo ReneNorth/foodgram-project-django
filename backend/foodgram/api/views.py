@@ -32,13 +32,11 @@ log = logging.getLogger(__name__)
 
 
 class SubscriptionListCreateDestroyViewSet(
-    mixins.DestroyModelMixin,
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet,
-):
+        mixins.DestroyModelMixin,
+        mixins.ListModelMixin,
+        mixins.CreateModelMixin,
+        viewsets.GenericViewSet):
     """ """
-
     permission_classes = [
         IsAuthenticated,
     ]
