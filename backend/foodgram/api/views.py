@@ -76,6 +76,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeCreatePatchSerializer
     pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     permission_classes = [
         IsAuthorOrReadOnly,
@@ -105,17 +106,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             Response: The response containing the serialized
             data of the created recipe.
         """
-        log.warning('__req data__')
-        log.warning(request.data)
-
         serializer = self.get_serializer(
             data=request.data,
             context={
                 "user": request.user,
             },
         )
-        log.warning(serializer)
-        log.warning('test warn')
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -132,7 +128,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def partial_update(self, request, *args, **kwargs):
-        log.warning(self)
         instance = self.get_object()
         serializer = self.get_serializer(
             instance, data=request.data, partial=True)

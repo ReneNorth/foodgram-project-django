@@ -4,6 +4,7 @@ from django.contrib.auth import get_user
 from django.test import Client, TestCase
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework.authtoken.models import Token
+import logging
 
 from ingredients.models import Ingredient
 from recipe.models import Recipe, RecipeIngredient
@@ -12,7 +13,8 @@ from api.views import FavoritedCreateDeleteViewSet
 
 User = get_user_model()
 
-print(c.TEST, 'TEEEEST')
+logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 # вынести в constants
@@ -129,6 +131,7 @@ class RecipeApiTest(TestCase):
 
     def test_recipe_filter_2_tags(self):
         """Checks that a query with two tags returns 2 elements"""
+        log.info(f'no of recipes in the database: {Recipe.objects.count()}')
         response = self.guest_client.get(
             f'/api/recipes/?page=1&limit=6&tags={TAG1_SLUG}&tags={TAG2_SLUG}',
             content_type='application/json')
@@ -137,6 +140,3 @@ class RecipeApiTest(TestCase):
 
     def user_crerated(self):
         self.assertAlmostEqual(User.objects.count(), 2)
-
-    def test_recipe_create_api(self):
-        pass

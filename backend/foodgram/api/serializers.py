@@ -143,7 +143,6 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
             'ingredients', 'image']
 
     def get_user(self, obj):
-        log.warning(self, obj)
         if 'user' in self.context:
             return self.context['user']
         return None

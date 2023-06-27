@@ -17,7 +17,7 @@
 
 # # POST http://127.0.0.1/api/auth/token/login/ HTTP/1.1
 
-GET http://127.0.0.1/api/users
+# GET http://127.0.0.1/api/users
 
 POST http://127.0.0.1:8000/api/auth/token/login/ HTTP/1.1
 content-type: application/json
@@ -26,3 +26,7 @@ content-type: application/json
     "email": "admin@admin.com",
     "password": "admin"
 }
+
+GET http://127.0.0.1:8000/api/users/1/ HTTP/1.1
+content-type: application/json
+Authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
