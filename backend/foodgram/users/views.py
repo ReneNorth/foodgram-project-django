@@ -13,7 +13,8 @@ from subscription.models import Subscription
 # from .models import User
 from users.permissions import CreateListUsersPermission
 from users.serializers import CustomUserSerializer
-from api.serializers import RecipeRetreiveDelListSerializer
+from api.serializers import RecipeRetreiveDelListSerializer, SubscriptionListSerializer
+
 from api.pagination import CustomPagination
 import logging
 
@@ -44,69 +45,52 @@ class CustomizedUserViewSet(UserViewSet):
 
     @action(detail=False,
             url_path='subscriptions',
-            serializer_class=RecipeRetreiveDelListSerializer,
+            serializer_class=SubscriptionListSerializer,
             permission_classes=[IsAuthenticated, ],
             pagination_class=CustomPagination)
     def get_subscriptions(self, request):
-        log.info(dir(request))
-        log.info(f'request.user: {request.user}')
+        """
+        Returns queryset with the recipes of
+        all authors the user is subscribed to.
+        """
+        log.info(type(self))
+        log.info(self)
+
+        # subscriptions = Subscription.objects.filter(user=request.user)
+        subscriptions = User.objects.filter(subscribed__user=request.user)
+        log.info(subscriptions)
+        pagination = self.paginate_queryset(subscriptions)
+        if pagination is None:
+            log.warning('Pagination in subscriptions is disabled')
+        # pagination = CustomPagination.paginate_queryset(self, queryset=recipes,
+        #                                                 request=request)
+        serializer = self.get_serializer(pagination, many=True)
+        log.info(serializer.data)
+
+        return self.get_paginated_response(serializer.data)
+
+# failed attempt
+    @action(detail=False,
+            url_path='subscriptions-test',
+            serializer_class=RecipeRetreiveDelListSerializer,
+            permission_classes=[IsAuthenticated, ],
+            pagination_class=CustomPagination)
+    def get_subscriptions_test(self, request):
+        """
+        Returns queryset with the recipes of
+        all authors the user is subscribed to.
+        """
+        log.info(type(self))
+        log.info(self)
         recipes = Recipe.objects.filter(
             author__subscribed__user=request.user).order_by('-pub_date')
         log.info(recipes)
-        # serializer = RecipeRetreiveDelListSerializer(
-        #     Recipe.objects.filter(author=request.user), many=True)
-        return Response(self.get_serializer(recipes, many=True).data,
-                        status=status.HTTP_200_OK)
+        pagination = self.paginate_queryset(recipes)
+        if pagination is None:
+            log.warning('Pagination in subscriptions is disabled')
+        # pagination = CustomPagination.paginate_queryset(self, queryset=recipes,
+        #                                                 request=request)
+        serializer = self.get_serializer(pagination, many=True)
+        log.info(serializer.data)
 
-
-# class CustomUserViewSet(UserViewSet):
-#     pagination_class = LimitPageNumberPagination
-
-    # @action(detail=True, permission_classes=[IsAuthenticated])
-    # def subscribe(self, request, id=None):
-    #     user = request.user
-    #     author = get_object_or_404(User, id=id)
-
-    #     if user == author:
-    #         return Response({
-    #             'errors': 'Вы не можете подписываться на самого себя'
-    #         }, status=status.HTTP_400_BAD_REQUEST)
-    #     if Follow.objects.filter(user=user, author=author).exists():
-    #         return Response({
-    #             'errors': 'Вы уже подписаны на данного пользователя'
-    #         }, status=status.HTTP_400_BAD_REQUEST)
-
-    #     follow = Follow.objects.create(user=user, author=author)
-    #     serializer = FollowSerializer(
-    #         follow, context={'request': request}
-    #     )
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    # @subscribe.mapping.delete
-    # def del_subscribe(self, request, id=None):
-    #     user = request.user
-    #     author = get_object_or_404(User, id=id)
-    #     if user == author:
-    #         return Response({
-    #             'errors': 'Вы не можете отписываться от самого себя'
-    #         }, status=status.HTTP_400_BAD_REQUEST)
-    #     follow = Follow.objects.filter(user=user, author=author)
-    #     if follow.exists():
-    #         follow.delete()
-    #         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    #     return Response({
-    #         'errors': 'Вы уже отписались'
-    #     }, status=status.HTTP_400_BAD_REQUEST)
-
-    # @action(detail=False, permission_classes=[IsAuthenticated])
-    # def subscriptions(self, request):
-    #     user = request.user
-    #     queryset = Follow.objects.filter(user=user)
-    #     pages = self.paginate_queryset(queryset)
-    #     serializer = FollowSerializer(
-    #         pages,
-    #         many=True,
-    #         context={'request': request}
-    #     )
-    #     return self.get_paginated_response(serializer.data)
+        return self.get_paginated_response(serializer.data)

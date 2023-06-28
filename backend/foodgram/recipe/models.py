@@ -41,11 +41,14 @@ class Recipe(models.Model):
 
 class RecipeTag(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE,
-                            related_name='tags', unique=True)
+                            related_name='tags')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.tag} к рецепту {self.recipe}'
+
+    class Meta:
+        unique_together = ['tag', 'recipe']
 
 
 class RecipeIngredient(models.Model):

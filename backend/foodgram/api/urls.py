@@ -13,9 +13,9 @@ router1.register(r'ingredients', IngredientsReadOnlyViewSet)
 router1.register(r'recipes', RecipeViewSet)
 router1.register(r'tags', TagsReadOnlyViewSet)
 router1.register(r'users', CustomizedUserViewSet)
-router1.register('users/subscriptions/',
-                 SubscriptionListCreateDestroyViewSet,
-                 'subscriptions')
+# router1.register('users/subscriptions/',
+#                  SubscriptionListCreateDestroyViewSet,
+#                  'subscriptions')
 urlpatterns = [
     path('users/<int:author_id>/subscribe/',
          SubscriptionListCreateDestroyViewSet.as_view({'get': 'list',

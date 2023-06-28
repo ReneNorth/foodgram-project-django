@@ -55,46 +55,24 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    # name = serializers.SerializerMethodField()
-    # measurement_unit = serializers.SerializerMethodField()
 
     class Meta:
         model = RecipeIngredient
-        fields = [
-            # 'ingredient',
-            'id',
-            # 'name',
-            # 'measurement_unit',
-            'amount',
-        ]
+        fields = ['id', 'amount', ]
         extra_kwargs = {
-            # 'measurement_unit': {'read_only': True},
-            # 'name': {'read_only': True},
             'id': {'read_only': False},
         }
 
-    # TODO оптимизация через related?
-    # def get_name(self, obj):
-    #     return Ingredient.objects.get(id=obj.id).name
-        # return Ingredient.objects.get(id=obj.ingredient.id).name prev vers
-
-    # def get_measurement_unit(self, obj):
-    #     return Ingredient.objects.get(id=obj.id).measurement_unit
-        # return Ingredient.objects.get(id=obj.ingredient.id).measurement_unit
-        # prev vers
-
 
 class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
-    """ """
     author = CustomUserSerializer()
     is_in_shopping_cart = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
-    # ingredients = IngredientSerializer(many=True)
     ingredients = RecipeIngredientSerializer(many=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
 
-    def get_is_favorited(self, recipe):
+    def get_is_favorited(self, recipe) -> bool:
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
@@ -103,7 +81,7 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
             return True
         return False
 
-    def get_is_in_shopping_cart(self, recipe):
+    def get_is_in_shopping_cart(self, recipe) -> bool:
         user_id = self.context.get('request').user.id
         if InShoppingCart.objects.filter(user__id=user_id,
                                          recipe_in_cart=recipe).exists():
@@ -119,15 +97,6 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'tags', 'author', 'ingredients',
                             'is_favorited', 'is_in_shopping_cart', 'name',
                             'image', 'text', 'cooking_time', ]
-
-
-class RecipeLightSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Recipe
-        fields = [
-            'id', 'name', 'image',
-            'cooking_time'
-        ]
 
 
 class RecipeCreatePatchSerializer(serializers.ModelSerializer):
@@ -164,6 +133,15 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
                 return instance
         except Exception as er:
             raise serializers.ValidationError(f'{er}')
+
+
+class RecipeLightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = [
+            'id', 'name', 'image',
+            'cooking_time'
+        ]
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -261,13 +239,12 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
     """lists authors the user is subscribed to and their recipes"""
     recipes = RecipeLightSerializer(many=True)
     is_subscribed = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['email', 'id', 'first_name', 'last_name', 'username',
-                  'is_subscribed',
-                  'recipes',
-                  ]
+        fields = ['email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed', 'recipes', 'recipes_count']
 
     def get_is_subscribed(self, author):
         user_id = self.context.get('request').user.id
@@ -275,3 +252,8 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
                                        user__id=user_id):
             return True
         return False
+
+    def get_recipes_count(self, author):
+        log.info(author)
+        # log.info(dir(self))
+        return Recipe.objects.filter(author=author).count()
