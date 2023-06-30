@@ -54,19 +54,23 @@ class RecipeTag(models.Model):
 class RecipeIngredient(models.Model):
     """Ingredients for recipes."""
     ingredient = models.ForeignKey(Ingredient,
-                                   related_name='ingredients_in_recipe',
+                                   #    related_name='ingredients_in_recipe',
                                    on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe,
-                               related_name='ingredients_in_recipe',
+                               #    related_name='ingredients_in_recipe',
                                on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField(
         verbose_name='количество',
         default=1,
-        blank=True,
-        null=True,
         validators=[MinValueValidator(1,
-                                      'вес не может быть меньше одной десятой'
-                                      'от одной единицы измерения'), ])
+                                      'вес не может быть меньше одной'
+                                      'единицы измерения продукта'), ])
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['ingredient', 'recipe'],
+                                    name='unique ingredient per recipe')
+        ]
 
     def __str__(self) -> str:
         return f'Ингредиент {self.ingredient} в рецепте {self.recipe}'

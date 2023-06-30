@@ -18,19 +18,19 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'id', 'username', 'first_name',
-                  'last_name', 'password',
-                  'is_subscribed'
-                  ]
+                  'last_name', 'password', 'is_subscribed']
         lookup_field = 'username'
+        # read_only_fields = ['email', 'id', 'username', 'first_name',
+        #                     'last_name', 'password', 'is_subscribed']
         extra_kwargs = {'password': {'write_only': True}}
 
     def get_is_subscribed(self, obj):
         """Checks if the user is supscribed to the recipe's author"""
-        log.info(f'user obj: {obj}')
-        user_id = self.context.get('request').user.id
-        if Subscription.objects.filter(user_id=user_id,
-                                       author=obj).exists():
-            return True
+        if self.context.get('request'):
+            user_id = self.context.get('request').user.id
+            if Subscription.objects.filter(user_id=user_id,
+                                           author=obj).exists():
+                return True
         return False
 
     def create(self, validated_data):

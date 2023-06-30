@@ -9,6 +9,8 @@ class Constants():
     RECIPE2_NAME = 'test_recipe2'
     TAG1_SLUG = 'black'
     TAG2_SLUG = 'green'
+    USER2_USERNAME = 'username_authorized2'
+    USER2_EMAIL = 'user2@user.com'
 
 
 class TestUser():

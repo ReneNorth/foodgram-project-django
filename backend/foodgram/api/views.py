@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from api.pagination import CustomPagination
+from recipe.models import RecipeIngredient  # for test
 
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe
@@ -23,12 +24,19 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeCreatePatchSerializer,
                           RecipeRetreiveDelListSerializer,
                           SubscriptionCreateDeleteSerializer,
-                          SubscriptionListSerializer, TagSerializer)
+                          SubscriptionListSerializer, TagSerializer,
+                          RecipeIngredientSerializer)
 
 User = get_user_model()
 
 logging.basicConfig(format='%(message)s')
 log = logging.getLogger(__name__)
+
+
+class SimpleViewSet(viewsets.ModelViewSet):
+    queryset = RecipeIngredient.objects.all()
+    permission_classes = [AllowAny, ]
+    serializer_class = RecipeIngredientSerializer
 
 
 class SubscriptionListCreateDestroyViewSet(
@@ -43,7 +51,8 @@ class SubscriptionListCreateDestroyViewSet(
     def get_queryset(self):
         return User.objects.filter(subscribed__user__id=self.request.user.id)
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> (SubscriptionListSerializer |
+                                       SubscriptionCreateDeleteSerializer):
         if self.action == "list":
             return SubscriptionListSerializer
         return SubscriptionCreateDeleteSerializer
@@ -75,9 +84,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
-    permission_classes = [
-        IsAuthorOrReadOnly,
-    ]
+    permission_classes = [IsAuthorOrReadOnly, ]
 
     def get_serializer_class(self):
         """
@@ -111,6 +118,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+            log.info(f'serializer returned the data: {serializer.data}')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
