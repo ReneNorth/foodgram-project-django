@@ -56,7 +56,10 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    # id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    # id = serializers.SerializerMethodField(method_name='get_id')
+    # id = serializers.IntegerField(default=1)
+    id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit')
@@ -67,6 +70,35 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
                   'measurement_unit', ]
         read_only_fields = ['name', 'measurement_unit']
 
+    def to_internal_value(self, data):
+        log.info('to internal value')
+        log.info(data)
+        return data
+
+    # def to_representation(self, instance):
+    #     log.info('log representation')
+    #     representation = super().to_representation(instance)
+
+    #     # representation['id'] =
+    #     log.info(representation)
+    #     log.info(type(representation))
+    #     log.info(dir(representation))
+
+    #     return representation
+
+    # # def get_id(self, ingredient):
+    # #     log.info(ingredient)
+    # #     log.info(ingredient.ingredient)
+    # #     log.info(f'should be the id {ingredient.ingredient.id}')
+    # #     # log.info()
+    # #     return ingredient.ingredient
+    # #     # return 1
+
+    # def validate(self, attrs):
+    #     log.info('in validation')
+    #     log.info(attrs)
+    #     return attrs
+
 
 class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer()
@@ -76,6 +108,16 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
                                              source='recipeingredient_set')
     tags = TagSerializer(many=True)
     image = Base64ImageField()
+
+    class Meta:
+        model = Recipe
+        fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
+                  'is_in_shopping_cart', 'name', 'image', 'text',
+                  'cooking_time', ]
+        # do I need this?
+        read_only_fields = ['id', 'tags', 'author', 'ingredients',
+                            'is_favorited', 'is_in_shopping_cart', 'name',
+                            'image', 'text', 'cooking_time', ]
 
     def get_is_favorited(self, recipe) -> bool:
         user = self.context.get('request').user
@@ -95,15 +137,9 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
             return True
         return False
 
-    class Meta:
-        model = Recipe
-        fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image', 'text',
-                  'cooking_time', ]
-        # do I need this?
-        read_only_fields = ['id', 'tags', 'author', 'ingredients',
-                            'is_favorited', 'is_in_shopping_cart', 'name',
-                            'image', 'text', 'cooking_time', ]
+    def validate(self, attrs):
+        log.info(f'validation here {attrs}')
+        return attrs
 
 
 class RecipeCreatePatchSerializer(serializers.ModelSerializer):
@@ -111,7 +147,7 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all())
-    ingredients = RecipeIngredientSerializer(many=True)
+    ingredients = RecipeIngredientSerializer(many=True, )
     image = Base64ImageField()
     # is_favorited = serializers.BooleanField(required=False)
     # is_in_shopping_cart = serializers.BooleanField()
@@ -127,7 +163,7 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
                   #   'is_favorited', 'is_in_shopping_cart',
                   ]
 
-        read_only_fields = ['id', ]
+        # read_only_fields = ['id', ]
 
     def get_author(self, obj):
         if 'user' in self.context:
@@ -135,9 +171,8 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
-        log.info(validated_data)
         ingredients = validated_data.pop('ingredients')
-        log.info(f'ingredients info: {ingredients}')
+        log.info(f'1 LOOKING FOR ID {ingredients}')
         tags = validated_data.pop('tags')
         user = self.context['user']
         if user.is_authenticated:
@@ -147,13 +182,16 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
             # instance.is_in_shopping_cart.set(False)
             instance.save()
             for ingredient in ingredients:
+                log.info(f'2 LOOKING FOR ID {ingredient}')
+
                 RecipeIngredient.objects.create(
-                    ingredient=ingredient['id'],
+                    ingredient_id=ingredient['id'],
                     recipe_id=instance.id,
                     amount=ingredient['amount'])
             return instance
 
     def update(self, instance, validated_data):
+        log.info(f'it is an instance {instance}')
         instance.image = validated_data.get('image', instance.image)
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)
@@ -161,17 +199,25 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
             'cooking_time', instance.cooking_time
         )
         instance.tags.clear()
-        tags_data = self.initial_data.get('tags')
-        instance.tags.set(tags_data)
+        tags = self.initial_data.get('tags')
+        instance.tags.set(tags)
+        log.info(RecipeIngredient.objects.filter(recipe=instance))
         RecipeIngredient.objects.filter(recipe=instance).all().delete()
-        ingredients = validated_data.get('ingredients'), instance
+        ingredients = validated_data.get('ingredients')
         for ingredient in ingredients:
+            log.info(ingredient)
+            ingredient_id = ingredient['id']
+            log.info(f'what is in id {ingredient_id}')
             RecipeIngredient.objects.create(
-                ingredient=ingredient['id'],
+                ingredient_id=ingredient['id'],
                 recipe_id=instance.id,
                 amount=ingredient['amount'])
         instance.save()
         return instance
+
+    def validate(self, attrs):
+        log.info(f'validation here {attrs}')
+        return attrs
 
 
 class RecipeLightSerializer(serializers.ModelSerializer):

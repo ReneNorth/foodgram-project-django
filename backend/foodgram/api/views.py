@@ -118,7 +118,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            log.info(f'serializer returned the data: {serializer.data}')
+            log.info(f'serializier returned data: {serializer.data}')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -133,6 +133,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def partial_update(self, request, *args, **kwargs):
+        log.info(self)
+        log.info('test message', request)
         instance = self.get_object()
         serializer = self.get_serializer(
             instance, data=request.data, partial=True)

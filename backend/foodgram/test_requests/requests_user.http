@@ -44,9 +44,43 @@
 # content-type: application/json
 # Authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
 
-POST http://127.0.0.1:8000/api/recipes/ HTTP/1.1
-Authorization: Token 0f7f4692b1998b10ac2a66116a53380f761eac64
+# POST http://127.0.0.1:8000/api/recipes/ HTTP/1.1
+# content-type: application/json
+# authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
+
+# {
+#   "ingredients": [
+#       {"id": 1, "amount": 10}
+#   ],
+#   "tags": [1, 2],
+#   "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+#   "name": "string_rec",
+#   "text": "string",
+#   "cooking_time": 1
+# }
+
+PATCH  http://127.0.0.1:8000/api/recipes/82/ HTTP/1.1
 content-type: application/json
+authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
+
 {
-  "email": "user19@yandex.ru",
+  "ingredients": [
+    {
+      "id": 1,
+      "amount": 10
+      }],
+      "tags": [1, 2 ],
+      "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+      "name": "string",
+      "text": "string",
+      "cooking_time": 1
 }
+
+
+# log.info(f'it is an instance {instance}')
+# INFO it is an instance id 82: string_rec
+
+# log.info(ingredient)
+# INFO [OrderedDict([('id', <Ingredient: id 1: Капуста в кг>), ('amount', 10)])]
+
+# ingredient=ingredient['id']
