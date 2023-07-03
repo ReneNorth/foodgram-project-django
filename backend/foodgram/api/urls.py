@@ -4,7 +4,7 @@ from rest_framework import routers
 from api.views import (FavoritedCreateDeleteViewSet, RecipeViewSet,
                        IngredientsReadOnlyViewSet, TagsReadOnlyViewSet,
                        InShoppingCartCreateDeleteViewSet,
-                       SubscriptionListCreateDestroyViewSet, SimpleViewSet)
+                       SubscriptionListCreateDestroyViewSet)
 
 from users.views import CustomizedUserViewSet
 
@@ -13,7 +13,6 @@ router1.register(r'ingredients', IngredientsReadOnlyViewSet)
 router1.register(r'recipes', RecipeViewSet)
 router1.register(r'tags', TagsReadOnlyViewSet)
 router1.register(r'users', CustomizedUserViewSet)
-router1.register(r'test', SimpleViewSet)
 
 urlpatterns = [
     path('users/<int:author_id>/subscribe/',
@@ -29,5 +28,5 @@ urlpatterns = [
     path('', include(router1.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('api-auth/', include('rest_framework.urls')),  # for DRF Browsable API
+    #     path('api-auth/', include('rest_framework.urls')),  # for DRF Browsable API
 ]

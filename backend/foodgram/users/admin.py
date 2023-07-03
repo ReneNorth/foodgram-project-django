@@ -5,6 +5,6 @@ User = get_user_model()
 
 
 
-@admin.register(User)
-class Admin(admin.ModelAdmin):
-    pass
+# @admin.register(User)
+# class Admin(admin.ModelAdmin):
+#     pass

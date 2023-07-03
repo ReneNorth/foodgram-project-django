@@ -3,7 +3,8 @@ from django.db import models
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name='Тэг')
-    color = models.CharField(max_length=50, unique=True, verbose_name='Цвет')
+    color = models.CharField(max_length=7, unique=True, verbose_name='Цвет',
+                             help_text='Введите цвет в HEX формате')
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Cсылка')
 
     class Meta:

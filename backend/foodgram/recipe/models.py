@@ -12,10 +12,12 @@ class Recipe(models.Model):
     """Recipes."""
     author = models.ForeignKey(User,
                                related_name='recipes',
-                               verbose_name='Автор',
-                               on_delete=models.CASCADE)
+                               verbose_name='Author',
+                               on_delete=models.CASCADE,
+                               help_text='Author of the recipe')
     name = models.CharField(max_length=80,
-                            verbose_name='Название')
+                            verbose_name='Name',
+                            help_text='Name of the recipe')
     text = models.TextField(max_length=500,
                             verbose_name='Описание')
     cooking_time = models.PositiveSmallIntegerField(
@@ -26,10 +28,11 @@ class Recipe(models.Model):
                     MinValueValidator(1,
                                       'Время приготовления не может'
                                       'быть меньше одной минуты')],
-        verbose_name='Время на приготовление в минутах'
+        verbose_name='Время на приготовление в минутах',
+
     )
     image = models.ImageField(
-        upload_to='recipes/', null=True, default=None)
+        upload_to='recipes/', default=None)
     tags = models.ManyToManyField(Tag, through='RecipeTag')
     ingredients = models.ManyToManyField(
         Ingredient, through='RecipeIngredient')

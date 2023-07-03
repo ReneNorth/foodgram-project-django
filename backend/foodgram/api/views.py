@@ -1,17 +1,15 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Count
 import logging
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from api.pagination import CustomPagination
-from recipe.models import RecipeIngredient  # for test
 
 from ingredients.models import Ingredient
-from recipe.models import FavoriteRecipe, Recipe
+from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from shopping_cart.models import InShoppingCart
 from subscription.models import Subscription
 from tags.models import Tag
@@ -24,8 +22,7 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeCreatePatchSerializer,
                           RecipeRetreiveDelListSerializer,
                           SubscriptionCreateDeleteSerializer,
-                          SubscriptionListSerializer, TagSerializer,
-                          RecipeIngredientSerializer)
+                          SubscriptionListSerializer, TagSerializer)
 
 User = get_user_model()
 
@@ -33,18 +30,11 @@ logging.basicConfig(format='%(message)s')
 log = logging.getLogger(__name__)
 
 
-class SimpleViewSet(viewsets.ModelViewSet):
-    queryset = RecipeIngredient.objects.all()
-    permission_classes = [AllowAny, ]
-    serializer_class = RecipeIngredientSerializer
-
-
 class SubscriptionListCreateDestroyViewSet(
         mixins.DestroyModelMixin,
         mixins.ListModelMixin,
         mixins.CreateModelMixin,
         viewsets.GenericViewSet):
-    """ """
     permission_classes = [IsAuthenticated, ]
     pagination_class = CustomPagination
 
@@ -60,7 +50,7 @@ class SubscriptionListCreateDestroyViewSet(
     def create(self, request, author_id=None) -> Response:
         user = get_object_or_404(User, id=request.user.id)
         author = get_object_or_404(User, id=author_id)
-        serializer = self.get_serializer(
+        serializer = self.get_sericalizer(
             data=request.data,
             context={"user": user, "author": author, "request": request},
         )
@@ -79,14 +69,15 @@ class SubscriptionListCreateDestroyViewSet(
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by('-pub_date')
     serializer_class = RecipeCreatePatchSerializer
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     permission_classes = [IsAuthorOrReadOnly, ]
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> (RecipeRetreiveDelListSerializer |
+                                       RecipeCreatePatchSerializer):
         """
         Returns the appropriate serializer class based on the action.
 
@@ -132,16 +123,54 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         serializer.save(author=self.request.user)
 
-    def partial_update(self, request, *args, **kwargs):
+    def partial_update(self, request, *args, **kwargs) -> Response:
         log.info(self)
         log.info('test message', request)
         instance = self.get_object()
+        log.info(f'request data in recipe viewset {request.data}')
         serializer = self.get_serializer(
             instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+            log.info(f'serializer data in recipe viewset {serializer.data}')
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'],
+            permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        final_list = {}
+        ingredients = RecipeIngredient.objects.filter(
+            recipe__cart__user=request.user).values_list(
+            'ingredient__name', 'ingredient__measurement_unit',
+            'amount')
+        for item in ingredients:
+            name = item[0]
+            if name not in final_list:
+                final_list[name] = {
+                    'measurement_unit': item[1],
+                    'amount': item[2]
+                }
+            else:
+                final_list[name]['amount'] += item[2]
+        # pdfmetrics.registerFont(
+        #     TTFont('Slimamif', 'Slimamif.ttf', 'UTF-8'))
+        # response = HttpResponse(content_type='application/pdf')
+        # response['Content-Disposition'] = ('attachment; '
+        #                                    'filename="shopping_list.pdf"')
+        # page = canvas.Canvas(response)
+        # page.setFont('Slimamif', size=24)
+        # page.drawString(200, 800, 'Список ингредиентов')
+        # page.setFont('Slimamif', size=16)
+        # height = 750
+        # for i, (name, data) in enumerate(final_list.items(), 1):
+        #     page.drawString(75, height, (f'<{i}> {name} - {data["amount"]}, '
+        #                                  f'{data["measurement_unit"]}'))
+        #     height -= 25
+        # page.showPage()
+        # page.save()
+        # return response
+        return True
 
 
 class IngredientsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):

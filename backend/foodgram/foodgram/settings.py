@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(dotenv_path=os.path.abspath(
     os.path.join(BASE_DIR.parent, f'{os.pardir}/food_infra/.env')))
 SECRET_KEY = os.getenv('DJANGO_KEY')
-LOCAL_DEV = True
+LOCAL_DEV = False
 DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'web', '127.0.0.1', 'localhost', '127.0.0.1:8000']
@@ -56,15 +56,24 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        # theh session auth is for DRF Browsable API
-        'rest_framework.authentication.SessionAuthentication'
     ),
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
-    # 'DEFAULT_FILTER_BACKENDS': [
-    #     'django_filters.rest_framework.DjangoFilterBackend'
-    #     ],
+}
+
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'HIDE_USERS': False,
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.CustomUserSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
+    },
+    'PERMISSIONS': {
+        'user': ['rest_framework.permissions.AllowAny'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+    }
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -78,14 +87,6 @@ CORS_URLS_REGEX = r'^/api/.*$'
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
-
-
-DJOSER = {
-    'LOGIN_FIELD': 'email',
-    'SERIALIZERS': {
-        'user_create': 'users.serializers.CustomUserSerializer',
-    },
-}
 
 
 AUTH_USER_MODEL = "users.User"

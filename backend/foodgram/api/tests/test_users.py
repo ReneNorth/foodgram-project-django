@@ -74,6 +74,7 @@ class RecipeApiTest(TestCase):
             f'/api/users/{user.id}/',
             # **{"HTTP_AUTHORIZATION": f"Token {token}"}
         )
+        # страница должна быть доступна всем
         self.assertEqual(response_user_page.status_code, 200)
 
     def test_user_me_available(self):

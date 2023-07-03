@@ -30,19 +30,19 @@ class IsSuperUser(BasePermission):
 
 class RecipeTestPermission(BasePermission):
     """Доступ на чтение всем.
-    Доступ к изменению объекта только админу или суперпользователю."""
+    Доступ к изменению объекта только админу или администратору."""
 
     def has_permission(self, request, view):
         return (request.method in SAFE_METHODS
                 or (request.user.is_authenticated
-                    and request.user.is_admin)
+                    and request.user.role == 'admin')
                 )
 
     def has_object_permission(self, request, view, obj):
         return (request.method == 'GET'
                 or request.user.is_authenticated
                 and (request.user.is_superuser
-                     or request.user.is_admin)
+                     or request.user.role == 'admin')
                 )
 
 
@@ -64,5 +64,3 @@ class RecipePermission(BasePermission):
         ):
             return False
         return True
-
-

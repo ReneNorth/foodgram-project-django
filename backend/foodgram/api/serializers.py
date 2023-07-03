@@ -3,9 +3,10 @@ import logging
 
 import webcolors
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-from rest_framework import fields
+
 from rest_framework.validators import ValidationError
 
 from ingredients.models import Ingredient
@@ -29,18 +30,6 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
-class Hex2NameColor(serializers.Field):
-    def to_representation(self, value):
-        return value
-
-    def to_internal_value(self, data):
-        try:
-            data = webcolors.hex_to_name(data)
-        except ValueError:
-            raise serializers.ValidationError('Для этого цвета нет имени')
-        return data
-
-
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
@@ -48,7 +37,6 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
-    color = Hex2NameColor()
 
     class Meta:
         model = Tag
@@ -56,9 +44,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    # id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
-    # id = serializers.SerializerMethodField(method_name='get_id')
-    # id = serializers.IntegerField(default=1)
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -68,36 +53,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         model = RecipeIngredient
         fields = ['id', 'name', 'amount',
                   'measurement_unit', ]
-        read_only_fields = ['name', 'measurement_unit']
-
-    def to_internal_value(self, data):
-        log.info('to internal value')
-        log.info(data)
-        return data
-
-    # def to_representation(self, instance):
-    #     log.info('log representation')
-    #     representation = super().to_representation(instance)
-
-    #     # representation['id'] =
-    #     log.info(representation)
-    #     log.info(type(representation))
-    #     log.info(dir(representation))
-
-    #     return representation
-
-    # # def get_id(self, ingredient):
-    # #     log.info(ingredient)
-    # #     log.info(ingredient.ingredient)
-    # #     log.info(f'should be the id {ingredient.ingredient.id}')
-    # #     # log.info()
-    # #     return ingredient.ingredient
-    # #     # return 1
-
-    # def validate(self, attrs):
-    #     log.info('in validation')
-    #     log.info(attrs)
-    #     return attrs
+        # read_only_fields = ['name', 'measurement_unit']
 
 
 class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
@@ -114,7 +70,6 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
         fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time', ]
-        # do I need this?
         read_only_fields = ['id', 'tags', 'author', 'ingredients',
                             'is_favorited', 'is_in_shopping_cart', 'name',
                             'image', 'text', 'cooking_time', ]
@@ -137,33 +92,21 @@ class RecipeRetreiveDelListSerializer(serializers.ModelSerializer):
             return True
         return False
 
-    def validate(self, attrs):
-        log.info(f'validation here {attrs}')
-        return attrs
-
 
 class RecipeCreatePatchSerializer(serializers.ModelSerializer):
-    # нужно объединить с первым сериализатором
     author = CustomUserSerializer(read_only=True)
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all())
-    ingredients = RecipeIngredientSerializer(many=True, )
+    ingredients = RecipeIngredientSerializer(many=True, read_only=True,
+                                             source='recipeingredient_set')
     image = Base64ImageField()
-    # is_favorited = serializers.BooleanField(required=False)
-    # is_in_shopping_cart = serializers.BooleanField()
 
     class Meta:
         model = Recipe
-        # fields = [
-        #     'name', 'text', 'cooking_time', 'tags',
-        #     'ingredients', 'image']
-
         fields = ['id', 'tags', 'author', 'ingredients', 'name', 'image',
                   'text', 'cooking_time',
                   #   'is_favorited', 'is_in_shopping_cart',
                   ]
-
-        # read_only_fields = ['id', ]
 
     def get_author(self, obj):
         if 'user' in self.context:
@@ -204,6 +147,7 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
         log.info(RecipeIngredient.objects.filter(recipe=instance))
         RecipeIngredient.objects.filter(recipe=instance).all().delete()
         ingredients = validated_data.get('ingredients')
+        log.info(f'ingredients in update {ingredients}')
         for ingredient in ingredients:
             log.info(ingredient)
             ingredient_id = ingredient['id']
@@ -212,12 +156,34 @@ class RecipeCreatePatchSerializer(serializers.ModelSerializer):
                 ingredient_id=ingredient['id'],
                 recipe_id=instance.id,
                 amount=ingredient['amount'])
+            # instance.ingredients[ingredient['id']] = ingredient['amount']
         instance.save()
+        log.info(f'returned instance after saving {instance}')
+        log.info(f'returned instance after saving {instance.ingredients}')
         return instance
 
-    def validate(self, attrs):
-        log.info(f'validation here {attrs}')
-        return attrs
+    def validate(self, data):
+        """ADDED"""
+        ingredients = self.initial_data.get('ingredients')
+        if not ingredients:
+            raise serializers.ValidationError({
+                'ingredients': 'Нужен хоть один ингридиент для рецепта'})
+        ingredient_list = []
+        for ingredient_item in ingredients:
+            ingredient = get_object_or_404(Ingredient,
+                                           id=ingredient_item['id'])
+            if ingredient in ingredient_list:
+                raise serializers.ValidationError('Ингридиенты должны '
+                                                  'быть уникальными')
+            ingredient_list.append(ingredient)
+            if int(ingredient_item['amount']) < 0:
+                raise serializers.ValidationError({
+                    'ingredients': ('Убедитесь, что значение количества '
+                                    'ингредиента больше 0')
+                })
+        data['ingredients'] = ingredients
+        log.info(f'working here {data}')
+        return data
 
 
 class RecipeLightSerializer(serializers.ModelSerializer):

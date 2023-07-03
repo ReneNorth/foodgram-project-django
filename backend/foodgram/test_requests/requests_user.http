@@ -59,22 +59,22 @@
 #   "cooking_time": 1
 # }
 
-PATCH  http://127.0.0.1:8000/api/recipes/82/ HTTP/1.1
+GET  http://127.0.0.1:8000/api/recipes/82/ HTTP/1.1
 content-type: application/json
 authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
 
-{
-  "ingredients": [
-    {
-      "id": 1,
-      "amount": 10
-      }],
-      "tags": [1, 2 ],
-      "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
-      "name": "string",
-      "text": "string",
-      "cooking_time": 1
-}
+# {
+#   "ingredients": [
+#     {
+#       "id": 2,
+#       "amount": 10
+#       }],
+#       "tags": [1, 2 ],
+#       "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+#       "name": "string",
+#       "text": "string",
+#       "cooking_time": 1
+# }
 
 
 # log.info(f'it is an instance {instance}')

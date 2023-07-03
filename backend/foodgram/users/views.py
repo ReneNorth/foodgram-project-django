@@ -20,14 +20,11 @@ log = logging.getLogger(__name__)
 
 
 class CustomizedUserViewSet(UserViewSet):
-    # permission_classes = [CreateListUsersPermission, IsAuthenticated]
-    permission_classes = [AllowAny, IsAuthenticated, ]
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter, )
     search_fields = ('username', )
-    # lookup_field = 'username'
 
     @action(detail=False,
             methods=['GET', ],
