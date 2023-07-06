@@ -24,8 +24,9 @@ class RecipeFilter(django_filters.FilterSet):
         return queryset.filter(author_id=user)
 
     def filter_is_in_shopping_cart(self, queryset, *args):
-        return queryset.filter(is_in_cart__user=self.request.user,
-                               )
+        if self.request.user.is_anonymous is False:
+            return queryset.filter(is_in_cart__user=self.request.user)
+        return queryset
 
     def filter_is_favorited(self, queryset, *args):
         return queryset.filter(is_favorited__who_favorited=self.request.user)

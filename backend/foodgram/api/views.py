@@ -4,9 +4,10 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from api.pagination import CustomPagination
+from django.http import HttpResponse
 
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
@@ -19,8 +20,7 @@ from api.permissions import IsAuthorOrReadOnly
 from .filters import RecipeFilter
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           InShoppingCartSerializer,
-                          RecipeCreatePatchSerializer,
-                          RecipeRetreiveDelListSerializer,
+                          RecipeSerializer,
                           SubscriptionCreateDeleteSerializer,
                           SubscriptionListSerializer, TagSerializer)
 
@@ -28,6 +28,15 @@ User = get_user_model()
 
 logging.basicConfig(format='%(message)s')
 log = logging.getLogger(__name__)
+
+
+def txt_to_repr(final_list: dict) -> str:
+    txt_to_repr = ''
+    for name, amount in final_list.items():
+        unit = amount['measurement_unit']
+        amount = amount['amount']
+        txt_to_repr += f'{name} ({unit}) — {amount}\n'
+    return txt_to_repr
 
 
 class SubscriptionListCreateDestroyViewSet(
@@ -70,23 +79,14 @@ class SubscriptionListCreateDestroyViewSet(
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by('-pub_date')
-    serializer_class = RecipeCreatePatchSerializer
+    serializer_class = RecipeSerializer
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     permission_classes = [IsAuthorOrReadOnly, ]
 
-    def get_serializer_class(self) -> (RecipeRetreiveDelListSerializer |
-                                       RecipeCreatePatchSerializer):
-        """
-        Returns the appropriate serializer class based on the action.
-
-        Returns:
-            Serializer: The serializer class for the current action.
-        """
-        if self.action in ('retrieve', 'list', 'destroy'):
-            return RecipeRetreiveDelListSerializer
-        return RecipeCreatePatchSerializer
+    def get_serializer_context(self):
+        return {'user': self.request.user}
 
     def create(self, request, *args, **kwargs):
         """
@@ -104,12 +104,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(
             data=request.data,
             context={
-                "user": request.user,
+                'user': request.user,
             },
         )
+        log.info('in viewset')
+        log.info(request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            log.info(f'serializier returned data: {serializer.data}')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -124,24 +125,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def partial_update(self, request, *args, **kwargs) -> Response:
-        log.info(self)
-        log.info('test message', request)
         instance = self.get_object()
-        log.info(f'request data in recipe viewset {request.data}')
         serializer = self.get_serializer(
             instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            log.info(f'serializer data in recipe viewset {serializer.data}')
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated])
-    def download_shopping_cart(self, request):
+    def download_shopping_cart(self, request) -> HttpResponse:
         final_list = {}
         ingredients = RecipeIngredient.objects.filter(
-            recipe__cart__user=request.user).values_list(
+            recipe__is_in_cart__user=request.user).values_list(
             'ingredient__name', 'ingredient__measurement_unit',
             'amount')
         for item in ingredients:
@@ -153,24 +150,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 }
             else:
                 final_list[name]['amount'] += item[2]
-        # pdfmetrics.registerFont(
-        #     TTFont('Slimamif', 'Slimamif.ttf', 'UTF-8'))
-        # response = HttpResponse(content_type='application/pdf')
-        # response['Content-Disposition'] = ('attachment; '
-        #                                    'filename="shopping_list.pdf"')
-        # page = canvas.Canvas(response)
-        # page.setFont('Slimamif', size=24)
-        # page.drawString(200, 800, 'Список ингредиентов')
-        # page.setFont('Slimamif', size=16)
-        # height = 750
-        # for i, (name, data) in enumerate(final_list.items(), 1):
-        #     page.drawString(75, height, (f'<{i}> {name} - {data["amount"]}, '
-        #                                  f'{data["measurement_unit"]}'))
-        #     height -= 25
-        # page.showPage()
-        # page.save()
-        # return response
-        return True
+        filename = "список_покупок.txt"
+        response = HttpResponse(txt_to_repr(final_list),
+                                content_type='text/plain')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
 
 
 class IngredientsReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
