@@ -1,7 +1,9 @@
+import logging
+
 import django_filters
 
 from recipe.models import Recipe
-import logging
+
 logger = logging.getLogger(__name__)
 log = logging.getLogger(__name__)
 
@@ -33,9 +35,4 @@ class RecipeFilter(django_filters.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = [
-            'tags',
-            'author',
-            'is_favorited',
-            'is_in_shopping_cart',
-        ]
+        fields = ['tags', 'author', 'is_favorited', 'is_in_shopping_cart', ]

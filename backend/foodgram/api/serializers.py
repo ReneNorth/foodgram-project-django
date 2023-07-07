@@ -1,12 +1,10 @@
 import base64
 import logging
 
-import webcolors
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from django.core.files.base import ContentFile
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-
 from rest_framework.validators import ValidationError
 
 from ingredients.models import Ingredient
@@ -60,11 +58,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
 
     author = CustomUserSerializer(read_only=True)
-    # tags = serializers.PrimaryKeyRelatedField(
-    #     many=True, queryset=Tag.objects.all())
     tags = TagSerializer(many=True,
-                         read_only=True,
-                         )
+                         read_only=True)
     ingredients = RecipeIngredientSerializer(many=True, read_only=True,
                                              source='recipeingredient_set')
     image = Base64ImageField()
@@ -75,12 +70,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time', ]
         read_only_fields = ['id',  'author', ]
-
-    # нужно сделать так, чтобы при гет методе возвращался пеолный набор информации про тэги
-    # def to_representation(self, instance):
-    #     log.info('to repr working here')
-    #     log.info(f'{instance}')
-    #     return instance
 
     def get_is_favorited(self, recipe) -> bool:
         user = self.context.get('user')
@@ -105,8 +94,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
-        log.info('WORKING HERE')
-        log.info(validated_data)
         ingredients = validated_data.pop('ingredients')
         tags = self.initial_data.get('tags')
         user = self.context['user']
@@ -125,28 +112,20 @@ class RecipeSerializer(serializers.ModelSerializer):
         instance.image = validated_data.get('image', instance.image)
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)
-        instance.cooking_time = validated_data.get(
-            'cooking_time', instance.cooking_time
-        )
+        instance.cooking_time = validated_data.get('cooking_time',
+                                                   instance.cooking_time)
         instance.tags.clear()
         tags = self.initial_data.get('tags')
         instance.tags.set(tags)
-        # log.info(RecipeIngredient.objects.filter(recipe=instance))
         RecipeIngredient.objects.filter(recipe=instance).all().delete()
         ingredients = validated_data.get('ingredients')
-        # log.info(f'ingredients in update {ingredients}')
         for ingredient in ingredients:
-            # log.info(ingredient)
             ingredient_id = ingredient['id']
-            # log.info(f'what is in id {ingredient_id}')
             RecipeIngredient.objects.create(
                 ingredient_id=ingredient['id'],
                 recipe_id=instance.id,
                 amount=ingredient['amount'])
-            # instance.ingredients[ingredient['id']] = ingredient['amount']
         instance.save()
-        # log.info(f'returned instance after saving {instance}')
-        # log.info(f'returned instance after saving {instance.ingredients}')
         return instance
 
     def validate(self, data):
@@ -169,7 +148,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                                     'ингредиента больше 0')
                 })
         data['ingredients'] = ingredients
-        log.info(f'working here {data}')
         return data
 
 
@@ -274,7 +252,7 @@ class SubscriptionCreateDeleteSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionListSerializer(serializers.ModelSerializer):
-    """lists authors the user is subscribed to and their recipes"""
+    """Lists authors the user is subscribed to and their recipes."""
     recipes = RecipeLightSerializer(many=True)
     is_subscribed = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()

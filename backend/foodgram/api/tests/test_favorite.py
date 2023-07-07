@@ -1,19 +1,13 @@
+import logging
+
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+from django.test import TestCase
 
 from api.tests.constants import Constants as c
-import json
-import logging
-from django.contrib.auth import get_user_model
-from django.contrib.auth import get_user
-from django.shortcuts import get_object_or_404
-from django.test import Client, TestCase
-from rest_framework.test import APIRequestFactory, APIClient, force_authenticate
-from rest_framework.authtoken.models import Token
-
-from rest_framework.test import RequestsClient
 from ingredients.models import Ingredient
-from recipe.models import Recipe, RecipeIngredient
+from recipe.models import Recipe
 from tags.models import Tag
-from api.views import FavoritedCreateDeleteViewSet
 
 logging.basicConfig(format='%(message)s')
 log = logging.getLogger(__name__)
@@ -94,12 +88,6 @@ class RecipeApiTest(TestCase):
         super().tearDownClass()
 
     def test_getting_token(self):
-        # user = get_object_or_404(User, email='user2@user.com')
-        # client = RequestsClient()
-
-        # response_get = self.client.get('/api/recipes/')
-        # self.assertEqual(response_get.status_code, 200)
-
         response_create_user = self.client.post('/api/users/',
                                                 {"email": "vpupkin@yandex.ru",
                                                  "username": "vasya.pupkin",
@@ -132,11 +120,3 @@ class RecipeApiTest(TestCase):
             },
             content_type="application/json",
         )
-        # self.assertEqual(response_post.status_code, 200, response_post.data)
-
-    def test_favorite(self):
-        """Unfinished"""
-        # log.info(User.objects.all())
-        log.info(
-            'Техдлог по нписание тестов: проверка создания подписки и эндпоинта api/users/subscriptions. Возможно, есть простой способ создать юзера в текстурах [через эндпоинт ] и сохранить его на весь период тестирования')
-        # код в /my_temp

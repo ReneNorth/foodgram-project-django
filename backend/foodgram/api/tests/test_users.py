@@ -1,10 +1,11 @@
-from api.tests.constants import Constants as c
-from django.contrib.auth import get_user_model, get_user
-from django.test import Client, TestCase
-from rest_framework.authtoken.models import Token
-from django.shortcuts import get_object_or_404
 import logging
 
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+from django.test import Client, TestCase
+from rest_framework.authtoken.models import Token
+
+from api.tests.constants import Constants as c
 from ingredients.models import Ingredient
 from tags.models import Tag
 
@@ -74,7 +75,6 @@ class RecipeApiTest(TestCase):
             f'/api/users/{user.id}/',
             # **{"HTTP_AUTHORIZATION": f"Token {token}"}
         )
-        # страница должна быть доступна всем
         self.assertEqual(response_user_page.status_code, 200)
 
     def test_user_me_available(self):
@@ -112,5 +112,4 @@ class RecipeApiTest(TestCase):
             '/api/users/subscriptions/',
             **{"HTTP_AUTHORIZATION": f"Token {token}"},
         )
-        # создать второго юзера и на него подписать первого юзера
         self.assertEqual(response_subscriptions.status_code, 200)

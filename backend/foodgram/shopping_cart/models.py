@@ -25,4 +25,4 @@ class InShoppingCart(models.Model):
         )
 
     def __str__(self) -> str:
-        return f'{self.user} added to {self.recipe_in_cart} to cart'
+        return f'{self.user} added to {self.recipe_in_cart} to the cart'

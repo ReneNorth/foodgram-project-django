@@ -1,15 +1,13 @@
-from api.tests.constants import Constants as c
-from django.contrib.auth import get_user_model
-from django.contrib.auth import get_user
-from django.test import Client, TestCase
-from rest_framework.test import APIRequestFactory, force_authenticate
-from rest_framework.authtoken.models import Token
 import logging
 
+from django.contrib.auth import get_user_model
+from django.test import Client, TestCase
+from rest_framework.test import APIRequestFactory
+
+from api.tests.constants import Constants as c
 from ingredients.models import Ingredient
-from recipe.models import Recipe, RecipeIngredient
+from recipe.models import Recipe
 from tags.models import Tag
-from api.views import FavoritedCreateDeleteViewSet
 
 User = get_user_model()
 

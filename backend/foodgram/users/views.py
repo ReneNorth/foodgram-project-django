@@ -1,17 +1,17 @@
-from django.shortcuts import get_object_or_404
+import logging
+
 from django.contrib.auth import get_user_model
-from rest_framework import filters, status
+from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from users.serializers import CustomUserSerializer
-from api.serializers import SubscriptionListSerializer
 
 from api.pagination import CustomPagination
-import logging
+from api.serializers import SubscriptionListSerializer
+from users.serializers import CustomUserSerializer
 
 User = get_user_model()
 

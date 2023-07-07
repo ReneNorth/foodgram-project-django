@@ -1,26 +1,26 @@
-from django.contrib.auth import get_user_model
 import logging
+
+from django.contrib.auth import get_user_model
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from api.pagination import CustomPagination
-from django.http import HttpResponse
 
+from api.pagination import CustomPagination
+from api.permissions import IsAuthorOrReadOnly
 from ingredients.models import Ingredient
 from recipe.models import FavoriteRecipe, Recipe, RecipeIngredient
 from shopping_cart.models import InShoppingCart
 from subscription.models import Subscription
 from tags.models import Tag
 from users.permissions import RecipePermission
-from api.permissions import IsAuthorOrReadOnly
 
 from .filters import RecipeFilter
 from .serializers import (FavoriteSerializer, IngredientSerializer,
-                          InShoppingCartSerializer,
-                          RecipeSerializer,
+                          InShoppingCartSerializer, RecipeSerializer,
                           SubscriptionCreateDeleteSerializer,
                           SubscriptionListSerializer, TagSerializer)
 
@@ -30,7 +30,11 @@ logging.basicConfig(format='%(message)s')
 log = logging.getLogger(__name__)
 
 
-def txt_to_repr(final_list: dict) -> str:
+def dict_to_txt(final_list: dict) -> str:
+    """
+    Takes a dictionary of ingredients as input
+    and returns a pretty string.
+    """
     txt_to_repr = ''
     for name, amount in final_list.items():
         unit = amount['measurement_unit']
@@ -59,7 +63,7 @@ class SubscriptionListCreateDestroyViewSet(
     def create(self, request, author_id=None) -> Response:
         user = get_object_or_404(User, id=request.user.id)
         author = get_object_or_404(User, id=author_id)
-        serializer = self.get_sericalizer(
+        serializer = self.get_serializer(
             data=request.data,
             context={"user": user, "author": author, "request": request},
         )
@@ -103,12 +107,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         serializer = self.get_serializer(
             data=request.data,
-            context={
-                'user': request.user,
-            },
+            context={'user': request.user, },
         )
-        log.info('in viewset')
-        log.info(request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -136,22 +136,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request) -> HttpResponse:
-        final_list = {}
+        shopping_list = {}
         ingredients = RecipeIngredient.objects.filter(
             recipe__is_in_cart__user=request.user).values_list(
             'ingredient__name', 'ingredient__measurement_unit',
             'amount')
         for item in ingredients:
             name = item[0]
-            if name not in final_list:
-                final_list[name] = {
+            if name not in shopping_list:
+                shopping_list[name] = {
                     'measurement_unit': item[1],
                     'amount': item[2]
                 }
             else:
-                final_list[name]['amount'] += item[2]
-        filename = "список_покупок.txt"
-        response = HttpResponse(txt_to_repr(final_list),
+                shopping_list[name]['amount'] += item[2]
+        filename = 'shopping_list.txt'
+        response = HttpResponse(dict_to_txt(shopping_list),
                                 content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
@@ -194,7 +194,6 @@ class FavoritedCreateDeleteViewSet(
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # TODO проверить не лишний ли декторатор
     @action(methods=["delete"], detail=False)
     def destroy(self, request, pk=None) -> Response:
         favorited = get_object_or_404(
@@ -213,7 +212,6 @@ class InShoppingCartCreateDeleteViewSet(
     serializer_class = InShoppingCartSerializer
     permission_classes = (RecipePermission,)
 
-    # TODO Refactoring
     @action(methods=["post"], detail=False)
     def create(self, request, pk=None) -> Response:
         """
@@ -223,17 +221,16 @@ class InShoppingCartCreateDeleteViewSet(
         user = get_object_or_404(User, id=request.user.id)
         recipe = get_object_or_404(Recipe, pk=pk)
         serializer = self.get_serializer(
-            data=request.data, context={"user": user, "recipe_in_cart": recipe}
+            data=request.data, context={'user': user, 'recipe_in_cart': recipe}
         )
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=["delete"], detail=False)
+    @action(methods=['delete'], detail=False)
     def destroy(self, request, pk=None) -> Response:
         recipe_in_cart = get_object_or_404(
-            InShoppingCart, user=request.user.id, recipe_in_cart_id=pk
-        )
+            InShoppingCart, user=request.user.id, recipe_in_cart_id=pk)
         self.perform_destroy(recipe_in_cart)
-        return Response("object deleted", status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)

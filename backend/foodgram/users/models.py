@@ -9,15 +9,15 @@ class User(AbstractUser):
         (USER, 'user'),
         (ADMIN, 'admin'),
     )
-    username = models.CharField(max_length=150, unique=True)
+    # username = models.CharField(max_length=150, unique=True)
     role = models.CharField(choices=CHOICES,
                             default='user',
                             max_length=128)
 
     class Meta:
         ordering = ['id']
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
         constraints = [
             models.UniqueConstraint(fields=['username', 'email'],
                                     name='unique_user')

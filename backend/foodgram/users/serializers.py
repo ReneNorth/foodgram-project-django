@@ -1,7 +1,8 @@
+import logging
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-import logging
 
 from subscription.models import Subscription
 
@@ -12,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    """Customized user serialiser. """
+    """Customized user serialiser with redefined create method. """
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -20,8 +21,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = ['email', 'id', 'username', 'first_name',
                   'last_name', 'password', 'is_subscribed']
         lookup_field = 'username'
-        # read_only_fields = ['email', 'id', 'username', 'first_name',
-        #                     'last_name', 'password', 'is_subscribed']
         extra_kwargs = {'password': {'write_only': True}}
 
     def get_is_subscribed(self, obj):
