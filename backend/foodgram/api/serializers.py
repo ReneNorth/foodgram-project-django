@@ -60,11 +60,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
 
     author = CustomUserSerializer(read_only=True)
-    tags = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Tag.objects.all())
-    # tags = TagSerializer(many=True,
-    #                      #  read_only=True,
-    #                      )
+    # tags = serializers.PrimaryKeyRelatedField(
+    #     many=True, queryset=Tag.objects.all())
+    tags = TagSerializer(many=True,
+                         read_only=True,
+                         )
     ingredients = RecipeIngredientSerializer(many=True, read_only=True,
                                              source='recipeingredient_set')
     image = Base64ImageField()
@@ -108,7 +108,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         log.info('WORKING HERE')
         log.info(validated_data)
         ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
+        tags = self.initial_data.get('tags')
         user = self.context['user']
         if user.is_authenticated:
             instance = Recipe.objects.create(author=user, **validated_data)
@@ -171,100 +171,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         data['ingredients'] = ingredients
         log.info(f'working here {data}')
         return data
-
-
-# class RecipeCreatePatchSerializer(serializers.ModelSerializer):
-#     """ DEPRECIATED """
-#     author = CustomUserSerializer(read_only=True)
-#     tags = serializers.PrimaryKeyRelatedField(
-#         many=True, queryset=Tag.objects.all())
-#     ingredients = RecipeIngredientSerializer(many=True, read_only=True,
-#                                              source='recipeingredient_set')
-#     image = Base64ImageField()
-
-#     class Meta:
-#         model = Recipe
-#         fields = ['id', 'tags', 'author', 'ingredients', 'name', 'image',
-#                   'text', 'cooking_time',
-#                   #   'is_favorited', 'is_in_shopping_cart',
-#                   ]
-
-#     def get_author(self, obj):
-#         if 'user' in self.context:
-#             return self.context['user']
-#         return None
-
-#     def create(self, validated_data):
-#         ingredients = validated_data.pop('ingredients')
-#         # log.info(f'1 LOOKING FOR ID {ingredients}')
-#         tags = validated_data.pop('tags')
-#         user = self.context['user']
-#         if user.is_authenticated:
-#             instance = Recipe.objects.create(author=user, **validated_data)
-#             instance.tags.set(tags)
-#             # instance.is_favorited.set(False)
-#             # instance.is_in_shopping_cart.set(False)
-#             instance.save()
-#             for ingredient in ingredients:
-#                 # log.info(f'2 LOOKING FOR ID {ingredient}')
-
-#                 RecipeIngredient.objects.create(
-#                     ingredient_id=ingredient['id'],
-#                     recipe_id=instance.id,
-#                     amount=ingredient['amount'])
-#             return instance
-
-    # def update(self, instance, validated_data):
-    #     # log.info(f'it is an instance {instance}')
-    #     instance.image = validated_data.get('image', instance.image)
-    #     instance.name = validated_data.get('name', instance.name)
-    #     instance.text = validated_data.get('text', instance.text)
-    #     instance.cooking_time = validated_data.get(
-    #         'cooking_time', instance.cooking_time
-    #     )
-    #     instance.tags.clear()
-    #     tags = self.initial_data.get('tags')
-    #     instance.tags.set(tags)
-    #     # log.info(RecipeIngredient.objects.filter(recipe=instance))
-    #     RecipeIngredient.objects.filter(recipe=instance).all().delete()
-    #     ingredients = validated_data.get('ingredients')
-    #     # log.info(f'ingredients in update {ingredients}')
-    #     for ingredient in ingredients:
-    #         # log.info(ingredient)
-    #         ingredient_id = ingredient['id']
-    #         # log.info(f'what is in id {ingredient_id}')
-    #         RecipeIngredient.objects.create(
-    #             ingredient_id=ingredient['id'],
-    #             recipe_id=instance.id,
-    #             amount=ingredient['amount'])
-    #         # instance.ingredients[ingredient['id']] = ingredient['amount']
-    #     instance.save()
-    #     # log.info(f'returned instance after saving {instance}')
-    #     # log.info(f'returned instance after saving {instance.ingredients}')
-    #     return instance
-
-    # def validate(self, data):
-    #     """ADDED"""
-    #     ingredients = self.initial_data.get('ingredients')
-    #     if not ingredients:
-    #         raise serializers.ValidationError({
-    #             'ingredients': 'Нужен хоть один ингридиент для рецепта'})
-    #     ingredient_list = []
-    #     for ingredient_item in ingredients:
-    #         ingredient = get_object_or_404(Ingredient,
-    #                                        id=ingredient_item['id'])
-    #         if ingredient in ingredient_list:
-    #             raise serializers.ValidationError('Ингридиенты должны '
-    #                                               'быть уникальными')
-    #         ingredient_list.append(ingredient)
-    #         if int(ingredient_item['amount']) < 0:
-    #             raise serializers.ValidationError({
-    #                 'ingredients': ('Убедитесь, что значение количества '
-    #                                 'ингредиента больше 0')
-    #             })
-    #     data['ingredients'] = ingredients
-    #     # log.info(f'working here {data}')
-    #     return data
 
 
 class RecipeLightSerializer(serializers.ModelSerializer):
