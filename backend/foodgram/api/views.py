@@ -54,8 +54,8 @@ class SubscriptionListCreateDestroyViewSet(
     def get_queryset(self):
         return User.objects.filter(subscribed__user__id=self.request.user.id)
 
-    def get_serializer_class(self) -> (SubscriptionListSerializer |
-                                       SubscriptionCreateDeleteSerializer):
+    def get_serializer_class(self) -> (
+            SubscriptionListSerializer | SubscriptionCreateDeleteSerializer):
         if self.action == "list":
             return SubscriptionListSerializer
         return SubscriptionCreateDeleteSerializer

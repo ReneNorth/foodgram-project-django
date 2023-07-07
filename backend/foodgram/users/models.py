@@ -9,7 +9,6 @@ class User(AbstractUser):
         (USER, 'user'),
         (ADMIN, 'admin'),
     )
-    # username = models.CharField(max_length=150, unique=True)
     role = models.CharField(choices=CHOICES,
                             default='user',
                             max_length=128)

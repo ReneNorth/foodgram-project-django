@@ -69,7 +69,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time', ]
-        read_only_fields = ['id',  'author', ]
+        read_only_fields = ['id', 'author', ]
 
     def get_is_favorited(self, recipe) -> bool:
         user = self.context.get('user')
@@ -120,7 +120,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         RecipeIngredient.objects.filter(recipe=instance).all().delete()
         ingredients = validated_data.get('ingredients')
         for ingredient in ingredients:
-            ingredient_id = ingredient['id']
             RecipeIngredient.objects.create(
                 ingredient_id=ingredient['id'],
                 recipe_id=instance.id,
@@ -129,23 +128,23 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, data):
-        """ADDED"""
         ingredients = self.initial_data.get('ingredients')
         if not ingredients:
-            raise serializers.ValidationError({
-                'ingredients': 'Нужен хоть один ингридиент для рецепта'})
+            raise serializers.ValidationError(
+                {'ingredients': 'you need at least one ingredient'
+                                'for the recipe'})
         ingredient_list = []
         for ingredient_item in ingredients:
             ingredient = get_object_or_404(Ingredient,
                                            id=ingredient_item['id'])
             if ingredient in ingredient_list:
-                raise serializers.ValidationError('Ингридиенты должны '
-                                                  'быть уникальными')
+                raise serializers.ValidationError(
+                    'Ingredients should be unique')
             ingredient_list.append(ingredient)
             if int(ingredient_item['amount']) < 0:
                 raise serializers.ValidationError({
-                    'ingredients': ('Убедитесь, что значение количества '
-                                    'ингредиента больше 0')
+                    'ingredients': ('Make sure that the value of the '
+                                    'ingredient quantity is greater than 0')
                 })
         data['ingredients'] = ingredients
         return data
@@ -183,8 +182,8 @@ class FavoriteSerializer(serializers.ModelSerializer):
         recipe_id = self.context["favorited_recipe"].id
         if FavoriteRecipe.objects.filter(who_favorited_id=user_id,
                                          favorited_recipe_id=recipe_id):
-            raise serializers.ValidationError('Нельзя добавить рецепт в '
-                                              'избранные два раза')
+            raise serializers.ValidationError('You cannot add the recipe'
+                                              'to favorites twice')
         favorite_recipe = FavoriteRecipe.objects.create(
             who_favorited_id=user_id,
             favorited_recipe_id=recipe_id)
@@ -215,8 +214,8 @@ class InShoppingCartSerializer(serializers.ModelSerializer):
         recipe_id = self.context["recipe_in_cart"].id
         if InShoppingCart.objects.filter(user=user_id,
                                          recipe_in_cart_id=recipe_id):
-            raise serializers.ValidationError('Нельзя добавить рецепт в '
-                                              'избранные два раза')
+            raise serializers.ValidationError('You cannot add the recipe to '
+                                              'the cart twice')
         recipe_in_cart = InShoppingCart.objects.create(
             user_id=user_id,
             recipe_in_cart_id=recipe_id)
@@ -244,10 +243,12 @@ class SubscriptionCreateDeleteSerializer(serializers.ModelSerializer):
             user = self.context['user'].id
             author = self.context['author'].id
             if author == user:
-                raise ValidationError('Нельзя подписаться на себя!')
+                raise ValidationError(
+                    'You cannot subscribe to yourself!')
             if Subscription.objects.filter(user__id=user,
                                            author__id=author).exists():
-                raise ValidationError('Нельзя подписаться два раза')
+                raise ValidationError(
+                    'You cannot subscribe twice to the same user')
         return data
 
 

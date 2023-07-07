@@ -106,17 +106,3 @@ class RecipeApiTest(TestCase):
                                      },
                                     content_type="application/json")
         self.assertEqual(response.status_code, 200)
-
-        response_post = self.client.post(
-            '/api/recipes', {
-                "ingredients": [
-                    {"id": 1123, "amount": 10}
-                ],
-                "tags": [1, 2],
-                "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
-                "name": "string",
-                "text": "string",
-                "cooking_time": 1
-            },
-            content_type="application/json",
-        )

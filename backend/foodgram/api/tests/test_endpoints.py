@@ -3,8 +3,6 @@ import logging
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from rest_framework.test import APIRequestFactory
-
-from api.tests.constants import Constants as c
 from ingredients.models import Ingredient
 from recipe.models import Recipe
 from tags.models import Tag
@@ -29,7 +27,6 @@ class RecipeApiTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.guest_client = Client()
-        factory = APIRequestFactory()
         cls.authorized_user1 = User.objects.create(
             username='username_authorized',
             role='user',

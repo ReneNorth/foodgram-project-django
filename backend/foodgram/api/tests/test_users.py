@@ -67,8 +67,6 @@ class RecipeApiTest(TestCase):
 
         # self.assertEqual(response_login.status_code, 201) # таргет
         self.assertEqual(response_login.status_code, 200)
-
-        token = Token.objects.get(user=user)
         self.client.force_login(user)
 
         response_user_page = self.client.get(

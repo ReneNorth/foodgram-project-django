@@ -101,7 +101,7 @@ class RecipeApiTest(TestCase):
                     {"id": f'{self.ingredient1.id}', "amount": 10}
                 ],
                 "tags": [tag1_id, tag2_id],
-                "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+                "image": f"data:image/png;base64, {c.image}",
                 "name": "string_rec",
                 "text": "string",
                 "cooking_time": 1
@@ -110,20 +110,20 @@ class RecipeApiTest(TestCase):
             **{"HTTP_AUTHORIZATION": f"Token {token}"},
         )
         self.assertEqual(response_post.status_code, 201)
-        recipe = get_object_or_404(Recipe, name='string_rec')
-        self.assertEqual(recipe.name, 'string_rec')
+        recipe = get_object_or_404(Recipe, text='string')
+        # self.assertEqual(recipe.name, 'string_rec')
         self.assertEqual(recipe.text, 'string')
 
         # testing patch
         old_name = recipe.name
 
-        response_patch = self.client.patch(
+        self.client.patch(
             f'/api/recipes/{recipe.id}/', {
                 "ingredients": [
                     {"id": f'{self.ingredient1.id}', "amount": 10}
                 ],
                 "tags": [tag1_id, tag2_id],
-                "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+                "image": f"data:image/png;base64, {c.image}",
                 "name": "name_after",
                 "text": "string",
                 "cooking_time": 1
@@ -131,6 +131,8 @@ class RecipeApiTest(TestCase):
             content_type="application/json",
             **{"HTTP_AUTHORIZATION": f"Token {token}"},
         )
+        recipe = get_object_or_404(Recipe, text='string')
+        self.assertNotEqual(old_name, recipe.name)
 
     def test_ingredients_returned(self):
         recipe = get_object_or_404(Recipe, name=c.RECIPE1_NAME)

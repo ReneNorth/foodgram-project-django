@@ -14,3 +14,7 @@ class Constants():
     TAG2_SLUG = 'green'
     USER2_USERNAME = 'username_authorized2'
     USER2_EMAIL = 'user2@user.com'
+
+    image = ('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///'
+             '9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCBy'
+             'xOyYQAAAABJRU5ErkJggg==')
