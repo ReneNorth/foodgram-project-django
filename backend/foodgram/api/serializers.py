@@ -99,14 +99,17 @@ class RecipeSerializer(serializers.ModelSerializer):
             instance = Recipe.objects.create(author=user, **validated_data)
             instance.tags.set(tags)
             instance.save()
+            batch = []
             for ingredient in ingredients:
-                RecipeIngredient.objects.create(
+                batch.append(RecipeIngredient(
                     ingredient_id=ingredient['id'],
                     recipe_id=instance.id,
-                    amount=ingredient['amount'])
+                    amount=ingredient['amount']))
+            RecipeIngredient.objects.bulk_create(batch)
             return instance
 
     def update(self, instance, validated_data):
+        # super().
         instance.image = validated_data.get('image', instance.image)
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)
@@ -117,11 +120,13 @@ class RecipeSerializer(serializers.ModelSerializer):
         instance.tags.set(tags)
         RecipeIngredient.objects.filter(recipe=instance).all().delete()
         ingredients = validated_data.get('ingredients')
+        batch = []
         for ingredient in ingredients:
-            RecipeIngredient.objects.create(
+            batch.append(RecipeIngredient(
                 ingredient_id=ingredient['id'],
                 recipe_id=instance.id,
-                amount=ingredient['amount'])
+                amount=ingredient['amount']))
+        RecipeIngredient.objects.bulk_create(batch)
         instance.save()
         return instance
 
@@ -261,16 +266,21 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
         fields = ['email', 'id', 'username', 'first_name', 'last_name',
                   'is_subscribed', 'recipes', 'recipes_count']
 
-    def get_is_subscribed(self, author):
-        user_id = self.context.get('request').user.id
-        # return Subscription.objects.filter(
-        #     author=author, user__id=user_id).exists()
+    def get_is_subscribed(self, author) -> bool:
+        user = self.context.get('user')
+        return (
+            user
+            and Subscription.objects.filter(author=author,
+                                            user=user).exists()
+        )
 
-        # works
-        if Subscription.objects.filter(author=author,
-                                       user__id=user_id):
-            return True
-        return False
-
-    def get_recipes_count(self, author):
+    def get_recipes_count(self, author) -> int:
         return Recipe.objects.filter(author=author).count()
+
+    def get_is_favorited(self, recipe) -> bool:
+        user = self.context.get('user')
+        return (
+            user
+            and FavoriteRecipe.objects.filter(
+                who_favorited__id=user.id, favorited_recipe=recipe).exists()
+        )

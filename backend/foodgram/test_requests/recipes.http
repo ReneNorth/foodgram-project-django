@@ -11,7 +11,8 @@
 
 
 # http://localhost/api/recipes/
-http://localhost/api/recipes/31/
+# http://localhost/api/recipes/31/
 # http://localhost/api/users/me/
+GET http://127.0.0.1:8000/api/recipes/download_shopping_cart/ HTTP/1.1
 content-type: application/json
 Authorization: Token 0f7f4692b1998b10ac2a66116a53380f761eac64

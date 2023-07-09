@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 
 from api.tests.constants import Constants as c
 from ingredients.models import Ingredient
-from recipe.models import Recipe
+from recipe.models import Recipe, RecipeIngredient
 from tags.models import Tag
 
 User = get_user_model()
@@ -95,7 +95,8 @@ class RecipeApiTest(TestCase):
         response_post = self.client.post(
             '/api/recipes/', {
                 "ingredients": [
-                    {"id": f'{self.ingredient1.id}', "amount": 10}
+                    {"id": f'{self.ingredient1.id}', "amount": 10, },
+                    {"id": f'{self.ingredient2.id}', "amount": 20, }
                 ],
                 "tags": [tag1_id, tag2_id],
                 "image": f"data:image/png;base64, {c.image}",
@@ -109,6 +110,9 @@ class RecipeApiTest(TestCase):
         self.assertEqual(response_post.status_code, 201)
         recipe = get_object_or_404(Recipe, text='string')
         self.assertEqual(recipe.text, 'string')
+
+        self.assertEqual(
+            len(RecipeIngredient.objects.filter(recipe=recipe)), 2)
 
         old_name = recipe.name
         self.client.patch(
@@ -127,6 +131,9 @@ class RecipeApiTest(TestCase):
         )
         recipe = get_object_or_404(Recipe, text='string')
         self.assertNotEqual(old_name, recipe.name)
+
+        self.assertEqual(
+            len(RecipeIngredient.objects.filter(recipe=recipe)), 1)
 
     def test_ingredients_returned(self):
         recipe = get_object_or_404(Recipe, name=c.RECIPE1_NAME)
