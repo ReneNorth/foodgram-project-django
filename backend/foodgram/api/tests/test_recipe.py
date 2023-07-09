@@ -11,7 +11,6 @@ from recipe.models import Recipe
 from tags.models import Tag
 
 User = get_user_model()
-logger = logging.getLogger(__name__)
 log = logging.getLogger(__name__)
 
 
@@ -85,8 +84,6 @@ class RecipeApiTest(TestCase):
                                               "email": "vpupkin@yandex.ru"
                                           },
                                           "application/json")
-
-        # self.assertEqual(response_login.status_code, 201) # таргет
         self.assertEqual(response_login.status_code, 200)
 
         token = Token.objects.get(user=user)
@@ -111,12 +108,9 @@ class RecipeApiTest(TestCase):
         )
         self.assertEqual(response_post.status_code, 201)
         recipe = get_object_or_404(Recipe, text='string')
-        # self.assertEqual(recipe.name, 'string_rec')
         self.assertEqual(recipe.text, 'string')
 
-        # testing patch
         old_name = recipe.name
-
         self.client.patch(
             f'/api/recipes/{recipe.id}/', {
                 "ingredients": [

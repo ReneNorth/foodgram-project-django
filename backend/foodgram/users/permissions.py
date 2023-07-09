@@ -7,10 +7,7 @@ class RecipePermission(BasePermission):
                 or request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        if (
-                request.method in ['DELETE', 'PATCH', ]
+        return (request.method in ['DELETE', 'PATCH', ]
                 and request.user.is_user
                 and request.user != obj.author
-        ):
-            return False
-        return True
+                or request.user.is_admin)

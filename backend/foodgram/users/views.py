@@ -14,8 +14,6 @@ from api.serializers import SubscriptionListSerializer
 from users.serializers import CustomUserSerializer
 
 User = get_user_model()
-
-logger = logging.getLogger(__name__)
 log = logging.getLogger(__name__)
 
 
@@ -25,6 +23,9 @@ class CustomizedUserViewSet(UserViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter, )
     search_fields = ('username', )
+
+    def get_serializer_context(self):
+        return {'user': self.request.user}
 
     @action(detail=False,
             methods=['GET', ],

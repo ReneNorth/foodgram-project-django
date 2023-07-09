@@ -15,7 +15,6 @@ from tags.models import Tag
 from users.serializers import CustomUserSerializer
 
 User = get_user_model()
-logger = logging.getLogger(__name__)
 log = logging.getLogger(__name__)
 
 
@@ -73,20 +72,19 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, recipe) -> bool:
         user = self.context.get('user')
-        if user is None:
-            return False
-        if FavoriteRecipe.objects.filter(who_favorited__id=user.id,
-                                         favorited_recipe=recipe).exists():
-            return True
-        return False
+        return (
+            user
+            and FavoriteRecipe.objects.filter(
+                who_favorited__id=user.id, favorited_recipe=recipe).exists()
+        )
 
     def get_is_in_shopping_cart(self, recipe) -> bool:
         user = self.context.get('user')
-        if user.is_anonymous is False:
-            if InShoppingCart.objects.filter(user=user,
-                                             recipe_in_cart=recipe).exists():
-                return True
-        return False
+        return (
+            not user.is_anonymous
+            and InShoppingCart.objects.filter(
+                user=user, recipe_in_cart=recipe).exists()
+        )
 
     def get_author(self, obj):
         if 'user' in self.context:
@@ -133,14 +131,14 @@ class RecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'ingredients': 'you need at least one ingredient'
                                 'for the recipe'})
-        ingredient_list = []
+        ingredient_list = set({})
         for ingredient_item in ingredients:
             ingredient = get_object_or_404(Ingredient,
                                            id=ingredient_item['id'])
             if ingredient in ingredient_list:
                 raise serializers.ValidationError(
                     'Ingredients should be unique')
-            ingredient_list.append(ingredient)
+            ingredient_list.add(ingredient)
             if int(ingredient_item['amount']) < 0:
                 raise serializers.ValidationError({
                     'ingredients': ('Make sure that the value of the '
@@ -265,6 +263,10 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, author):
         user_id = self.context.get('request').user.id
+        # return Subscription.objects.filter(
+        #     author=author, user__id=user_id).exists()
+
+        # works
         if Subscription.objects.filter(author=author,
                                        user__id=user_id):
             return True

@@ -7,8 +7,6 @@ from rest_framework import serializers
 from subscription.models import Subscription
 
 User = get_user_model()
-
-logger = logging.getLogger(__name__)
 log = logging.getLogger(__name__)
 
 
@@ -25,12 +23,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         """Checks if the user is supscribed to the recipe's author"""
-        if self.context.get('request'):
-            user_id = self.context.get('request').user.id
-            if Subscription.objects.filter(user_id=user_id,
-                                           author=obj).exists():
-                return True
-        return False
+        user = self.context.get('user')
+        return (
+            not user.is_anonymous
+            and Subscription.objects.filter(user=user, author=obj).exists()
+        )
 
     def create(self, validated_data):
         user = User(email=validated_data['email'],

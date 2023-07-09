@@ -11,6 +11,7 @@
 
 
 # http://localhost/api/recipes/
-http://localhost/api/recipes/
+http://localhost/api/recipes/31/
+# http://localhost/api/users/me/
 content-type: application/json
-Authorization: Token 16abdcc76a35e471e67c3ac6d3f3097d3d7408f8
+Authorization: Token 0f7f4692b1998b10ac2a66116a53380f761eac64

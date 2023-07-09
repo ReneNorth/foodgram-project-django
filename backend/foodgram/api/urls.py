@@ -3,16 +3,16 @@ from rest_framework import routers
 
 from api.views import (FavoritedCreateDeleteViewSet,
                        IngredientsReadOnlyViewSet,
-                       InShoppingCartCreateDeleteViewSet, RecipeViewSet,
+                       InShoppingCartCreateDeleteViewSet,
                        SubscriptionListCreateDestroyViewSet,
-                       TagsReadOnlyViewSet)
+                       TagsReadOnlyViewSet, RecipeViewSet)
 from users.views import CustomizedUserViewSet
 
 router1 = routers.DefaultRouter()
-router1.register(r'ingredients', IngredientsReadOnlyViewSet)
-router1.register(r'recipes', RecipeViewSet)
-router1.register(r'tags', TagsReadOnlyViewSet)
-router1.register(r'users', CustomizedUserViewSet)
+router1.register('ingredients', IngredientsReadOnlyViewSet)
+router1.register('recipes', RecipeViewSet)
+router1.register('tags', TagsReadOnlyViewSet)
+router1.register('users', CustomizedUserViewSet)
 
 urlpatterns = [
     path('users/<int:author_id>/subscribe/',

@@ -4,7 +4,6 @@ import django_filters
 
 from recipe.models import Recipe
 
-logger = logging.getLogger(__name__)
 log = logging.getLogger(__name__)
 
 

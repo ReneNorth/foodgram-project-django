@@ -10,7 +10,6 @@ from ingredients.models import Ingredient
 from tags.models import Tag
 
 User = get_user_model()
-logger = logging.getLogger(__name__)
 log = logging.getLogger(__name__)
 
 

@@ -46,7 +46,10 @@ class RecipeTag(models.Model):
         return f'{self.tag} for the recipe {self.recipe}'
 
     class Meta:
-        unique_together = ['tag', 'recipe']
+        constraints = [
+            models.UniqueConstraint(fields=['tag', 'recipe'],
+                                    name='unique tag-recipe pair')
+        ]
 
 
 class RecipeIngredient(models.Model):
