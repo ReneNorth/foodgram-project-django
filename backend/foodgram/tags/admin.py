@@ -4,5 +4,5 @@ from tags.models import Tag
 
 
 @admin.register(Tag)
-class Admin(admin.ModelAdmin):
+class TagAdmin(admin.ModelAdmin):
     pass

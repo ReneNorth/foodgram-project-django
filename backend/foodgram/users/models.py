@@ -13,6 +13,14 @@ class User(AbstractUser):
                             default='user',
                             max_length=128)
 
+    @property
+    def is_user(self):
+        return self.role == self.USER
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN
+
     class Meta:
         ordering = ['id']
         verbose_name = 'User'
@@ -21,14 +29,6 @@ class User(AbstractUser):
             models.UniqueConstraint(fields=['username', 'email'],
                                     name='unique_user')
         ]
-
-    @property
-    def is_user(self):
-        return self.role == self.USER
-
-    @property
-    def is_admin(self):
-        return self.role == self.ADMIN
 
     def __str__(self):
         return self.username

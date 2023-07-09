@@ -4,5 +4,5 @@ from shopping_cart.models import InShoppingCart
 
 
 @admin.register(InShoppingCart)
-class Admin(admin.ModelAdmin):
+class InShoppingCartAdmin(admin.ModelAdmin):
     pass

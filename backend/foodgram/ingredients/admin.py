@@ -4,5 +4,6 @@ from .models import Ingredient
 
 
 @admin.register(Ingredient)
-class Admin(admin.ModelAdmin):
-    pass
+class IngredientAdmin(admin.ModelAdmin):
+    list_display = ['name', 'measurement_unit', ]
+    list_filter = ['name', ]
