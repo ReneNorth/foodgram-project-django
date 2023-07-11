@@ -9,6 +9,7 @@ services:
   web:
     build:
       context: ../backend
+    platform: linux/amd64  
     restart: always
     volumes:
       - static_value:/app/django_static/
@@ -22,6 +23,7 @@ services:
     build:
       context: ../frontend
       dockerfile: Dockerfile
+      platform: linux/amd64
     volumes:
       - ../frontend/:/app/result_build/
 
