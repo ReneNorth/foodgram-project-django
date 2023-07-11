@@ -18,7 +18,7 @@ services:
       - ./.env
 
   frontend:
-    image: yurydenorth/foodgram_frontend:latest
+    image: yurydenorth/foodgram_gateway:latest
     volumes:
       - ../frontend/:/app/result_build/
 

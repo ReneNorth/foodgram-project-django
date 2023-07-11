@@ -1,7 +1,6 @@
 import logging
 
 import django_filters
-
 from recipe.models import Recipe
 
 log = logging.getLogger(__name__)
