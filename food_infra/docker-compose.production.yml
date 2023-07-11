@@ -7,8 +7,7 @@ services:
     env_file:
       - ./.env
   web:
-    build:
-      context: ../backend
+    image: yurydenorth/foodgram_backend:latest
     restart: always
     volumes:
       - static_value:/app/django_static/
@@ -19,9 +18,7 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: yurydenorth/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
 
