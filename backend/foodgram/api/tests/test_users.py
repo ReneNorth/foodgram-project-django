@@ -38,9 +38,6 @@ class RecipeApiTest(TestCase):
             measurement_unit='kg'
         )
 
-    def setUp(self) -> None:
-        pass
-
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
