@@ -5,7 +5,7 @@ backend/foodgram/media/
 
 # project-specific
 old_requirements.txt
-logs
+# logs
 
 
 # Byte-compiled / optimized / DLL files
