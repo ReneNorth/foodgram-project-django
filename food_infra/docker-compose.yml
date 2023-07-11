@@ -7,7 +7,6 @@ services:
     env_file:
       - ./.env
   web:
-    platform: linux/amd64  
     build:
       context: ../backend
     restart: always
@@ -20,7 +19,6 @@ services:
       - ./.env
 
   frontend:
-    platform: linux/amd64
     build:
       context: ../frontend
       dockerfile: Dockerfile
