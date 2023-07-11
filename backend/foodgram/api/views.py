@@ -82,12 +82,13 @@ class SubscriptionListCreateDestroyViewSet(
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all().order_by('-pub_date')
+    queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     permission_classes = [IsAuthorOrReadOnly, ]
+    ordering_fields = ['-pub_date']
 
     def get_serializer_context(self):
         return {'user': self.request.user}
@@ -114,15 +115,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def perform_create(self, serializer):
-        """
-        Performs additional actions after creating a recipe.
+    # def perform_create(self, serializer):
+    #     """
+    #     Performs additional actions after creating a recipe.
 
-        Args:
-            serializer (Serializer): The serializer
-            instance used to create the recipe.
-        """
-        serializer.save(author=self.request.user)
+    #     Args:
+    #         serializer (Serializer): The serializer
+    #         instance used to create the recipe.
+    #     """
+    #     serializer.save(author=self.request.user)
 
     def partial_update(self, request, *args, **kwargs) -> Response:
         instance = self.get_object()
