@@ -109,7 +109,21 @@ class RecipeSerializer(serializers.ModelSerializer):
             return instance
 
     def update(self, instance, validated_data):
+        # super().save()
+        # super().validate()
         # super().
+        # instance.save(ar
+
+        # что нужно вызвать из родительского класса
+        # №, чтобы сохранить хотя бы поля изначальной модели
+        log.info('WORKING HERE')
+        log.info(self)
+        # log.info(len(self))
+        log.info('!------')
+        log.info(instance)
+        log.info('!------')
+        log.info(validated_data)
+        # super().update(self, instance, validated_data)
         instance.image = validated_data.get('image', instance.image)
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)

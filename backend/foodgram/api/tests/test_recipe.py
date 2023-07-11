@@ -115,6 +115,7 @@ class RecipeApiTest(TestCase):
             len(RecipeIngredient.objects.filter(recipe=recipe)), 2)
 
         old_name = recipe.name
+        log.info(old_name)
         self.client.patch(
             f'/api/recipes/{recipe.id}/', {
                 "ingredients": [
@@ -124,12 +125,15 @@ class RecipeApiTest(TestCase):
                 "image": f"data:image/png;base64, {c.image}",
                 "name": "name_after",
                 "text": "string",
-                "cooking_time": 1
+                "cooking_time": 2
             },
             content_type="application/json",
             **{"HTTP_AUTHORIZATION": f"Token {token}"},
         )
         recipe = get_object_or_404(Recipe, text='string')
+        log.info(old_name)
+        log.info('----------->')
+        log.info(recipe.name)
         self.assertNotEqual(old_name, recipe.name)
 
         self.assertEqual(

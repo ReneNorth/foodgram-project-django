@@ -42,13 +42,6 @@ def dict_to_txt(final_list: dict) -> str:
         txt_to_repr.append(f'{name} ({unit}) — {amount}\n')
     return ''.join(txt_to_repr)
 
-    # worked
-    # for name, amount in final_list.items():
-    #     unit = amount['measurement_unit']
-    #     amount = amount['amount']
-    #     txt_to_repr += f'{name} ({unit}) — {amount}\n'
-    # return txt_to_repr
-
 
 class SubscriptionListCreateDestroyViewSet(
         mixins.DestroyModelMixin,
