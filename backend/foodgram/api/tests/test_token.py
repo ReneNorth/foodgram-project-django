@@ -1,12 +1,8 @@
 import logging
 
-from api.tests.constants import Constants as c
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.test import TestCase
-from ingredients.models import Ingredient
-from recipe.models import Recipe
-from tags.models import Tag
 
 logging.basicConfig(format='%(message)s')
 log = logging.getLogger(__name__)
