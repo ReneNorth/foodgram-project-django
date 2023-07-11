@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(dotenv_path=os.path.abspath(
     os.path.join(BASE_DIR.parent, f'{os.pardir}/food_infra/.env')))
 SECRET_KEY = os.getenv('DJANGO_KEY')
-LOCAL_DEV = False
+LOCAL_DEV = True
 DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'web', '127.0.0.1', 'localhost', '127.0.0.1:8000']

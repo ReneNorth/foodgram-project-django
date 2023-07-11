@@ -59,9 +59,6 @@ class RecipeApiTest(TestCase):
         cls.recipe1.ingredients.set(
             [Ingredient.objects.get(name='test_ingredient1').id])
 
-    def setUp(self) -> None:
-        pass
-
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()

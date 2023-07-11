@@ -1,0 +1,270 @@
+DEBUG 2023-07-11 17:38:33,317 PngImagePlugin 2484 8074944000 STREAM b'IHDR' 16 13
+DEBUG 2023-07-11 17:38:33,317 PngImagePlugin 2484 8074944000 STREAM b'PLTE' 41 9
+DEBUG 2023-07-11 17:38:33,317 PngImagePlugin 2484 8074944000 STREAM b'pHYs' 62 9
+DEBUG 2023-07-11 17:38:33,317 PngImagePlugin 2484 8074944000 STREAM b'IDAT' 83 10
+DEBUG 2023-07-11 17:38:33,317 Image 2484 8074944000 Importing BlpImagePlugin
+DEBUG 2023-07-11 17:38:33,318 Image 2484 8074944000 Importing BmpImagePlugin
+DEBUG 2023-07-11 17:38:33,318 Image 2484 8074944000 Importing BufrStubImagePlugin
+DEBUG 2023-07-11 17:38:33,319 Image 2484 8074944000 Importing CurImagePlugin
+DEBUG 2023-07-11 17:38:33,319 Image 2484 8074944000 Importing DcxImagePlugin
+DEBUG 2023-07-11 17:38:33,320 Image 2484 8074944000 Importing DdsImagePlugin
+DEBUG 2023-07-11 17:38:33,320 Image 2484 8074944000 Importing EpsImagePlugin
+DEBUG 2023-07-11 17:38:33,321 Image 2484 8074944000 Importing FitsImagePlugin
+DEBUG 2023-07-11 17:38:33,322 Image 2484 8074944000 Importing FitsStubImagePlugin
+DEBUG 2023-07-11 17:38:33,322 Image 2484 8074944000 Importing FliImagePlugin
+DEBUG 2023-07-11 17:38:33,322 Image 2484 8074944000 Importing FpxImagePlugin
+DEBUG 2023-07-11 17:38:33,324 Image 2484 8074944000 Importing FtexImagePlugin
+DEBUG 2023-07-11 17:38:33,325 Image 2484 8074944000 Importing GbrImagePlugin
+DEBUG 2023-07-11 17:38:33,325 Image 2484 8074944000 Importing GifImagePlugin
+DEBUG 2023-07-11 17:38:33,325 Image 2484 8074944000 Importing GribStubImagePlugin
+DEBUG 2023-07-11 17:38:33,326 Image 2484 8074944000 Importing Hdf5StubImagePlugin
+DEBUG 2023-07-11 17:38:33,326 Image 2484 8074944000 Importing IcnsImagePlugin
+DEBUG 2023-07-11 17:38:33,328 Image 2484 8074944000 Importing IcoImagePlugin
+DEBUG 2023-07-11 17:38:33,328 Image 2484 8074944000 Importing ImImagePlugin
+DEBUG 2023-07-11 17:38:33,329 Image 2484 8074944000 Importing ImtImagePlugin
+DEBUG 2023-07-11 17:38:33,329 Image 2484 8074944000 Importing IptcImagePlugin
+DEBUG 2023-07-11 17:38:33,330 Image 2484 8074944000 Importing JpegImagePlugin
+DEBUG 2023-07-11 17:38:33,330 Image 2484 8074944000 Importing Jpeg2KImagePlugin
+DEBUG 2023-07-11 17:38:33,330 Image 2484 8074944000 Importing McIdasImagePlugin
+DEBUG 2023-07-11 17:38:33,331 Image 2484 8074944000 Importing MicImagePlugin
+DEBUG 2023-07-11 17:38:33,331 Image 2484 8074944000 Importing MpegImagePlugin
+DEBUG 2023-07-11 17:38:33,332 Image 2484 8074944000 Importing MpoImagePlugin
+DEBUG 2023-07-11 17:38:33,332 Image 2484 8074944000 Importing MspImagePlugin
+DEBUG 2023-07-11 17:38:33,332 Image 2484 8074944000 Importing PalmImagePlugin
+DEBUG 2023-07-11 17:38:33,334 Image 2484 8074944000 Importing PcdImagePlugin
+DEBUG 2023-07-11 17:38:33,334 Image 2484 8074944000 Importing PcxImagePlugin
+DEBUG 2023-07-11 17:38:33,334 Image 2484 8074944000 Importing PdfImagePlugin
+DEBUG 2023-07-11 17:38:33,339 Image 2484 8074944000 Importing PixarImagePlugin
+DEBUG 2023-07-11 17:38:33,344 Image 2484 8074944000 Importing PngImagePlugin
+DEBUG 2023-07-11 17:38:33,344 Image 2484 8074944000 Importing PpmImagePlugin
+DEBUG 2023-07-11 17:38:33,344 Image 2484 8074944000 Importing PsdImagePlugin
+DEBUG 2023-07-11 17:38:33,345 Image 2484 8074944000 Importing SgiImagePlugin
+DEBUG 2023-07-11 17:38:33,345 Image 2484 8074944000 Importing SpiderImagePlugin
+DEBUG 2023-07-11 17:38:33,345 Image 2484 8074944000 Importing SunImagePlugin
+DEBUG 2023-07-11 17:38:33,346 Image 2484 8074944000 Importing TgaImagePlugin
+DEBUG 2023-07-11 17:38:33,346 Image 2484 8074944000 Importing TiffImagePlugin
+DEBUG 2023-07-11 17:38:33,346 Image 2484 8074944000 Importing WebPImagePlugin
+DEBUG 2023-07-11 17:38:33,455 Image 2484 8074944000 Importing WmfImagePlugin
+DEBUG 2023-07-11 17:38:33,456 Image 2484 8074944000 Importing XbmImagePlugin
+DEBUG 2023-07-11 17:38:33,457 Image 2484 8074944000 Importing XpmImagePlugin
+DEBUG 2023-07-11 17:38:33,457 Image 2484 8074944000 Importing XVThumbImagePlugin
+INFO 2023-07-11 17:38:33,469 test_recipe 2484 8074944000 string_rec
+DEBUG 2023-07-11 17:38:33,474 PngImagePlugin 2484 8074944000 STREAM b'IHDR' 16 13
+DEBUG 2023-07-11 17:38:33,474 PngImagePlugin 2484 8074944000 STREAM b'PLTE' 41 9
+DEBUG 2023-07-11 17:38:33,474 PngImagePlugin 2484 8074944000 STREAM b'pHYs' 62 9
+DEBUG 2023-07-11 17:38:33,474 PngImagePlugin 2484 8074944000 STREAM b'IDAT' 83 10
+INFO 2023-07-11 17:38:33,474 serializers 2484 8074944000 WORKING HERE
+INFO 2023-07-11 17:38:33,474 serializers 2484 8074944000 RecipeSerializer(<Recipe: id 6: string_rec>, context={'user': <User: vasya.pupkin>}, data={'ingredients': [{'id': '5', 'amount': 10}], 'tags': [5, 6], 'image': 'data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==', 'name': 'name_after', 'text': 'string', 'cooking_time': 2}, partial=True):
+    id = IntegerField(label='ID', read_only=True)
+    tags = TagSerializer(many=True, read_only=True):
+        id = IntegerField(label='ID', read_only=True)
+        name = CharField(label='Tag', max_length=50, validators=[<UniqueValidator(queryset=Tag.objects.all())>])
+        color = CharField(help_text='Color in HEX format', max_length=7, validators=[<UniqueValidator(queryset=Tag.objects.all())>])
+        slug = SlugField(allow_unicode=False, max_length=50, validators=[<UniqueValidator(queryset=Tag.objects.all())>])
+    author = CustomUserSerializer(read_only=True):
+        email = EmailField(allow_blank=True, label='Адрес электронной почты', max_length=254, required=False)
+        id = IntegerField(label='ID', read_only=True)
+        username = CharField(help_text='Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.', label='Имя пользователя', max_length=150, validators=[<django.contrib.auth.validators.UnicodeUsernameValidator object>, <UniqueValidator(queryset=User.objects.all())>])
+        first_name = CharField(allow_blank=True, label='Имя', max_length=150, required=False)
+        last_name = CharField(allow_blank=True, label='Фамилия', max_length=150, required=False)
+        password = CharField(label='Пароль', max_length=128, write_only=True)
+        is_subscribed = SerializerMethodField()
+    ingredients = RecipeIngredientSerializer(many=True, read_only=True, source='recipeingredient_set'):
+        id = ReadOnlyField(source='ingredient.id')
+        name = ReadOnlyField(source='ingredient.name')
+        amount = IntegerField(label='Quantity', max_value=32767, min_value=1, required=False)
+        measurement_unit = ReadOnlyField(source='ingredient.measurement_unit')
+    is_favorited = SerializerMethodField()
+    is_in_shopping_cart = SerializerMethodField()
+    name = CharField(help_text='Name of the recipe', max_length=80)
+    image = Base64ImageField()
+    text = CharField(label='Description', max_length=500, style={'base_template': 'textarea.html'})
+    cooking_time = IntegerField(label='Time for cooking in minutes', max_value=43200, min_value=1)
+INFO 2023-07-11 17:38:33,477 serializers 2484 8074944000 !------
+INFO 2023-07-11 17:38:33,477 serializers 2484 8074944000 id 6: string_rec
+INFO 2023-07-11 17:38:33,477 serializers 2484 8074944000 !------
+INFO 2023-07-11 17:38:33,477 serializers 2484 8074944000 {'name': 'name_after', 'image': <ContentFile: Raw content>, 'text': 'string', 'cooking_time': 2, 'ingredients': [{'id': '5', 'amount': 10}]}
+INFO 2023-07-11 17:38:33,484 test_recipe 2484 8074944000 string_rec
+INFO 2023-07-11 17:38:33,484 test_recipe 2484 8074944000 ----------->
+INFO 2023-07-11 17:38:33,484 test_recipe 2484 8074944000 name_after
+INFO 2023-07-11 17:38:33,793 views 2484 8074944000 <QuerySet []>
+DEBUG 2023-07-11 17:49:25,414 PngImagePlugin 2716 8074944000 STREAM b'IHDR' 16 13
+DEBUG 2023-07-11 17:49:25,414 PngImagePlugin 2716 8074944000 STREAM b'PLTE' 41 9
+DEBUG 2023-07-11 17:49:25,414 PngImagePlugin 2716 8074944000 STREAM b'pHYs' 62 9
+DEBUG 2023-07-11 17:49:25,414 PngImagePlugin 2716 8074944000 STREAM b'IDAT' 83 10
+DEBUG 2023-07-11 17:49:25,415 Image 2716 8074944000 Importing BlpImagePlugin
+DEBUG 2023-07-11 17:49:25,416 Image 2716 8074944000 Importing BmpImagePlugin
+DEBUG 2023-07-11 17:49:25,416 Image 2716 8074944000 Importing BufrStubImagePlugin
+DEBUG 2023-07-11 17:49:25,416 Image 2716 8074944000 Importing CurImagePlugin
+DEBUG 2023-07-11 17:49:25,417 Image 2716 8074944000 Importing DcxImagePlugin
+DEBUG 2023-07-11 17:49:25,417 Image 2716 8074944000 Importing DdsImagePlugin
+DEBUG 2023-07-11 17:49:25,418 Image 2716 8074944000 Importing EpsImagePlugin
+DEBUG 2023-07-11 17:49:25,419 Image 2716 8074944000 Importing FitsImagePlugin
+DEBUG 2023-07-11 17:49:25,419 Image 2716 8074944000 Importing FitsStubImagePlugin
+DEBUG 2023-07-11 17:49:25,419 Image 2716 8074944000 Importing FliImagePlugin
+DEBUG 2023-07-11 17:49:25,420 Image 2716 8074944000 Importing FpxImagePlugin
+DEBUG 2023-07-11 17:49:25,421 Image 2716 8074944000 Importing FtexImagePlugin
+DEBUG 2023-07-11 17:49:25,422 Image 2716 8074944000 Importing GbrImagePlugin
+DEBUG 2023-07-11 17:49:25,422 Image 2716 8074944000 Importing GifImagePlugin
+DEBUG 2023-07-11 17:49:25,422 Image 2716 8074944000 Importing GribStubImagePlugin
+DEBUG 2023-07-11 17:49:25,423 Image 2716 8074944000 Importing Hdf5StubImagePlugin
+DEBUG 2023-07-11 17:49:25,423 Image 2716 8074944000 Importing IcnsImagePlugin
+DEBUG 2023-07-11 17:49:25,424 Image 2716 8074944000 Importing IcoImagePlugin
+DEBUG 2023-07-11 17:49:25,424 Image 2716 8074944000 Importing ImImagePlugin
+DEBUG 2023-07-11 17:49:25,425 Image 2716 8074944000 Importing ImtImagePlugin
+DEBUG 2023-07-11 17:49:25,426 Image 2716 8074944000 Importing IptcImagePlugin
+DEBUG 2023-07-11 17:49:25,427 Image 2716 8074944000 Importing JpegImagePlugin
+DEBUG 2023-07-11 17:49:25,427 Image 2716 8074944000 Importing Jpeg2KImagePlugin
+DEBUG 2023-07-11 17:49:25,427 Image 2716 8074944000 Importing McIdasImagePlugin
+DEBUG 2023-07-11 17:49:25,427 Image 2716 8074944000 Importing MicImagePlugin
+DEBUG 2023-07-11 17:49:25,428 Image 2716 8074944000 Importing MpegImagePlugin
+DEBUG 2023-07-11 17:49:25,428 Image 2716 8074944000 Importing MpoImagePlugin
+DEBUG 2023-07-11 17:49:25,428 Image 2716 8074944000 Importing MspImagePlugin
+DEBUG 2023-07-11 17:49:25,429 Image 2716 8074944000 Importing PalmImagePlugin
+DEBUG 2023-07-11 17:49:25,430 Image 2716 8074944000 Importing PcdImagePlugin
+DEBUG 2023-07-11 17:49:25,431 Image 2716 8074944000 Importing PcxImagePlugin
+DEBUG 2023-07-11 17:49:25,431 Image 2716 8074944000 Importing PdfImagePlugin
+DEBUG 2023-07-11 17:49:25,436 Image 2716 8074944000 Importing PixarImagePlugin
+DEBUG 2023-07-11 17:49:25,437 Image 2716 8074944000 Importing PngImagePlugin
+DEBUG 2023-07-11 17:49:25,437 Image 2716 8074944000 Importing PpmImagePlugin
+DEBUG 2023-07-11 17:49:25,437 Image 2716 8074944000 Importing PsdImagePlugin
+DEBUG 2023-07-11 17:49:25,437 Image 2716 8074944000 Importing SgiImagePlugin
+DEBUG 2023-07-11 17:49:25,438 Image 2716 8074944000 Importing SpiderImagePlugin
+DEBUG 2023-07-11 17:49:25,438 Image 2716 8074944000 Importing SunImagePlugin
+DEBUG 2023-07-11 17:49:25,438 Image 2716 8074944000 Importing TgaImagePlugin
+DEBUG 2023-07-11 17:49:25,439 Image 2716 8074944000 Importing TiffImagePlugin
+DEBUG 2023-07-11 17:49:25,439 Image 2716 8074944000 Importing WebPImagePlugin
+DEBUG 2023-07-11 17:49:25,443 Image 2716 8074944000 Importing WmfImagePlugin
+DEBUG 2023-07-11 17:49:25,443 Image 2716 8074944000 Importing XbmImagePlugin
+DEBUG 2023-07-11 17:49:25,444 Image 2716 8074944000 Importing XpmImagePlugin
+DEBUG 2023-07-11 17:49:25,444 Image 2716 8074944000 Importing XVThumbImagePlugin
+INFO 2023-07-11 17:49:25,456 test_recipe 2716 8074944000 string_rec
+DEBUG 2023-07-11 17:49:25,460 PngImagePlugin 2716 8074944000 STREAM b'IHDR' 16 13
+DEBUG 2023-07-11 17:49:25,460 PngImagePlugin 2716 8074944000 STREAM b'PLTE' 41 9
+DEBUG 2023-07-11 17:49:25,460 PngImagePlugin 2716 8074944000 STREAM b'pHYs' 62 9
+DEBUG 2023-07-11 17:49:25,460 PngImagePlugin 2716 8074944000 STREAM b'IDAT' 83 10
+INFO 2023-07-11 17:49:25,461 serializers 2716 8074944000 WORKING HERE
+INFO 2023-07-11 17:49:25,461 serializers 2716 8074944000 RecipeSerializer(<Recipe: id 6: string_rec>, context={'user': <User: vasya.pupkin>}, data={'ingredients': [{'id': '5', 'amount': 10}], 'tags': [5, 6], 'image': 'data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==', 'name': 'name_after', 'text': 'string', 'cooking_time': 2}, partial=True):
+    id = IntegerField(label='ID', read_only=True)
+    tags = TagSerializer(many=True, read_only=True):
+        id = IntegerField(label='ID', read_only=True)
+        name = CharField(label='Tag', max_length=50, validators=[<UniqueValidator(queryset=Tag.objects.all())>])
+        color = CharField(help_text='Color in HEX format', max_length=7, validators=[<UniqueValidator(queryset=Tag.objects.all())>])
+        slug = SlugField(allow_unicode=False, max_length=50, validators=[<UniqueValidator(queryset=Tag.objects.all())>])
+    author = CustomUserSerializer(read_only=True):
+        email = EmailField(allow_blank=True, label='Адрес электронной почты', max_length=254, required=False)
+        id = IntegerField(label='ID', read_only=True)
+        username = CharField(help_text='Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.', label='Имя пользователя', max_length=150, validators=[<django.contrib.auth.validators.UnicodeUsernameValidator object>, <UniqueValidator(queryset=User.objects.all())>])
+        first_name = CharField(allow_blank=True, label='Имя', max_length=150, required=False)
+        last_name = CharField(allow_blank=True, label='Фамилия', max_length=150, required=False)
+        password = CharField(label='Пароль', max_length=128, write_only=True)
+        is_subscribed = SerializerMethodField()
+    ingredients = RecipeIngredientSerializer(many=True, read_only=True, source='recipeingredient_set'):
+        id = ReadOnlyField(source='ingredient.id')
+        name = ReadOnlyField(source='ingredient.name')
+        amount = IntegerField(label='Quantity', max_value=32767, min_value=1, required=False)
+        measurement_unit = ReadOnlyField(source='ingredient.measurement_unit')
+    is_favorited = SerializerMethodField()
+    is_in_shopping_cart = SerializerMethodField()
+    name = CharField(help_text='Name of the recipe', max_length=80)
+    image = Base64ImageField()
+    text = CharField(label='Description', max_length=500, style={'base_template': 'textarea.html'})
+    cooking_time = IntegerField(label='Time for cooking in minutes', max_value=43200, min_value=1)
+INFO 2023-07-11 17:49:25,462 serializers 2716 8074944000 !------
+INFO 2023-07-11 17:49:25,462 serializers 2716 8074944000 id 6: string_rec
+INFO 2023-07-11 17:49:25,462 serializers 2716 8074944000 !------
+INFO 2023-07-11 17:49:25,462 serializers 2716 8074944000 {'name': 'name_after', 'image': <ContentFile: Raw content>, 'text': 'string', 'cooking_time': 2, 'ingredients': [{'id': '5', 'amount': 10}]}
+INFO 2023-07-11 17:49:25,471 test_recipe 2716 8074944000 string_rec
+INFO 2023-07-11 17:49:25,471 test_recipe 2716 8074944000 ----------->
+INFO 2023-07-11 17:49:25,471 test_recipe 2716 8074944000 name_after
+INFO 2023-07-11 17:49:25,784 views 2716 8074944000 <QuerySet []>
+DEBUG 2023-07-11 17:51:02,167 PngImagePlugin 2797 8074944000 STREAM b'IHDR' 16 13
+DEBUG 2023-07-11 17:51:02,167 PngImagePlugin 2797 8074944000 STREAM b'PLTE' 41 9
+DEBUG 2023-07-11 17:51:02,167 PngImagePlugin 2797 8074944000 STREAM b'pHYs' 62 9
+DEBUG 2023-07-11 17:51:02,167 PngImagePlugin 2797 8074944000 STREAM b'IDAT' 83 10
+DEBUG 2023-07-11 17:51:02,167 Image 2797 8074944000 Importing BlpImagePlugin
+DEBUG 2023-07-11 17:51:02,168 Image 2797 8074944000 Importing BmpImagePlugin
+DEBUG 2023-07-11 17:51:02,168 Image 2797 8074944000 Importing BufrStubImagePlugin
+DEBUG 2023-07-11 17:51:02,169 Image 2797 8074944000 Importing CurImagePlugin
+DEBUG 2023-07-11 17:51:02,169 Image 2797 8074944000 Importing DcxImagePlugin
+DEBUG 2023-07-11 17:51:02,170 Image 2797 8074944000 Importing DdsImagePlugin
+DEBUG 2023-07-11 17:51:02,170 Image 2797 8074944000 Importing EpsImagePlugin
+DEBUG 2023-07-11 17:51:02,171 Image 2797 8074944000 Importing FitsImagePlugin
+DEBUG 2023-07-11 17:51:02,172 Image 2797 8074944000 Importing FitsStubImagePlugin
+DEBUG 2023-07-11 17:51:02,172 Image 2797 8074944000 Importing FliImagePlugin
+DEBUG 2023-07-11 17:51:02,172 Image 2797 8074944000 Importing FpxImagePlugin
+DEBUG 2023-07-11 17:51:02,174 Image 2797 8074944000 Importing FtexImagePlugin
+DEBUG 2023-07-11 17:51:02,175 Image 2797 8074944000 Importing GbrImagePlugin
+DEBUG 2023-07-11 17:51:02,175 Image 2797 8074944000 Importing GifImagePlugin
+DEBUG 2023-07-11 17:51:02,175 Image 2797 8074944000 Importing GribStubImagePlugin
+DEBUG 2023-07-11 17:51:02,176 Image 2797 8074944000 Importing Hdf5StubImagePlugin
+DEBUG 2023-07-11 17:51:02,176 Image 2797 8074944000 Importing IcnsImagePlugin
+DEBUG 2023-07-11 17:51:02,179 Image 2797 8074944000 Importing IcoImagePlugin
+DEBUG 2023-07-11 17:51:02,179 Image 2797 8074944000 Importing ImImagePlugin
+DEBUG 2023-07-11 17:51:02,180 Image 2797 8074944000 Importing ImtImagePlugin
+DEBUG 2023-07-11 17:51:02,181 Image 2797 8074944000 Importing IptcImagePlugin
+DEBUG 2023-07-11 17:51:02,182 Image 2797 8074944000 Importing JpegImagePlugin
+DEBUG 2023-07-11 17:51:02,182 Image 2797 8074944000 Importing Jpeg2KImagePlugin
+DEBUG 2023-07-11 17:51:02,182 Image 2797 8074944000 Importing McIdasImagePlugin
+DEBUG 2023-07-11 17:51:02,182 Image 2797 8074944000 Importing MicImagePlugin
+DEBUG 2023-07-11 17:51:02,182 Image 2797 8074944000 Importing MpegImagePlugin
+DEBUG 2023-07-11 17:51:02,183 Image 2797 8074944000 Importing MpoImagePlugin
+DEBUG 2023-07-11 17:51:02,183 Image 2797 8074944000 Importing MspImagePlugin
+DEBUG 2023-07-11 17:51:02,183 Image 2797 8074944000 Importing PalmImagePlugin
+DEBUG 2023-07-11 17:51:02,185 Image 2797 8074944000 Importing PcdImagePlugin
+DEBUG 2023-07-11 17:51:02,186 Image 2797 8074944000 Importing PcxImagePlugin
+DEBUG 2023-07-11 17:51:02,186 Image 2797 8074944000 Importing PdfImagePlugin
+DEBUG 2023-07-11 17:51:02,191 Image 2797 8074944000 Importing PixarImagePlugin
+DEBUG 2023-07-11 17:51:02,191 Image 2797 8074944000 Importing PngImagePlugin
+DEBUG 2023-07-11 17:51:02,192 Image 2797 8074944000 Importing PpmImagePlugin
+DEBUG 2023-07-11 17:51:02,192 Image 2797 8074944000 Importing PsdImagePlugin
+DEBUG 2023-07-11 17:51:02,192 Image 2797 8074944000 Importing SgiImagePlugin
+DEBUG 2023-07-11 17:51:02,192 Image 2797 8074944000 Importing SpiderImagePlugin
+DEBUG 2023-07-11 17:51:02,193 Image 2797 8074944000 Importing SunImagePlugin
+DEBUG 2023-07-11 17:51:02,193 Image 2797 8074944000 Importing TgaImagePlugin
+DEBUG 2023-07-11 17:51:02,193 Image 2797 8074944000 Importing TiffImagePlugin
+DEBUG 2023-07-11 17:51:02,193 Image 2797 8074944000 Importing WebPImagePlugin
+DEBUG 2023-07-11 17:51:02,197 Image 2797 8074944000 Importing WmfImagePlugin
+DEBUG 2023-07-11 17:51:02,198 Image 2797 8074944000 Importing XbmImagePlugin
+DEBUG 2023-07-11 17:51:02,199 Image 2797 8074944000 Importing XpmImagePlugin
+DEBUG 2023-07-11 17:51:02,199 Image 2797 8074944000 Importing XVThumbImagePlugin
+INFO 2023-07-11 17:51:02,210 test_recipe 2797 8074944000 string_rec
+DEBUG 2023-07-11 17:51:02,214 PngImagePlugin 2797 8074944000 STREAM b'IHDR' 16 13
+DEBUG 2023-07-11 17:51:02,214 PngImagePlugin 2797 8074944000 STREAM b'PLTE' 41 9
+DEBUG 2023-07-11 17:51:02,214 PngImagePlugin 2797 8074944000 STREAM b'pHYs' 62 9
+DEBUG 2023-07-11 17:51:02,214 PngImagePlugin 2797 8074944000 STREAM b'IDAT' 83 10
+INFO 2023-07-11 17:51:02,215 serializers 2797 8074944000 WORKING HERE
+INFO 2023-07-11 17:51:02,215 serializers 2797 8074944000 RecipeSerializer(<Recipe: id 4: string_rec>, context={'user': <User: vasya.pupkin>}, data={'ingredients': [{'id': '3', 'amount': 10}], 'tags': [3, 4], 'image': 'data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==', 'name': 'name_after', 'text': 'string', 'cooking_time': 2}, partial=True):
+    id = IntegerField(label='ID', read_only=True)
+    tags = TagSerializer(many=True, read_only=True):
+        id = IntegerField(label='ID', read_only=True)
+        name = CharField(label='Tag', max_length=50, validators=[<UniqueValidator(queryset=Tag.objects.all())>])
+        color = CharField(help_text='Color in HEX format', max_length=7, validators=[<UniqueValidator(queryset=Tag.objects.all())>])
+        slug = SlugField(allow_unicode=False, max_length=50, validators=[<UniqueValidator(queryset=Tag.objects.all())>])
+    author = CustomUserSerializer(read_only=True):
+        email = EmailField(allow_blank=True, label='Адрес электронной почты', max_length=254, required=False)
+        id = IntegerField(label='ID', read_only=True)
+        username = CharField(help_text='Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.', label='Имя пользователя', max_length=150, validators=[<django.contrib.auth.validators.UnicodeUsernameValidator object>, <UniqueValidator(queryset=User.objects.all())>])
+        first_name = CharField(allow_blank=True, label='Имя', max_length=150, required=False)
+        last_name = CharField(allow_blank=True, label='Фамилия', max_length=150, required=False)
+        password = CharField(label='Пароль', max_length=128, write_only=True)
+        is_subscribed = SerializerMethodField()
+    ingredients = RecipeIngredientSerializer(many=True, read_only=True, source='recipeingredient_set'):
+        id = ReadOnlyField(source='ingredient.id')
+        name = ReadOnlyField(source='ingredient.name')
+        amount = IntegerField(label='Quantity', max_value=32767, min_value=1, required=False)
+        measurement_unit = ReadOnlyField(source='ingredient.measurement_unit')
+    is_favorited = SerializerMethodField()
+    is_in_shopping_cart = SerializerMethodField()
+    name = CharField(help_text='Name of the recipe', max_length=80)
+    image = Base64ImageField()
+    text = CharField(label='Description', max_length=500, style={'base_template': 'textarea.html'})
+    cooking_time = IntegerField(label='Time for cooking in minutes', max_value=43200, min_value=1)
+INFO 2023-07-11 17:51:02,217 serializers 2797 8074944000 !------
+INFO 2023-07-11 17:51:02,217 serializers 2797 8074944000 id 4: string_rec
+INFO 2023-07-11 17:51:02,217 serializers 2797 8074944000 !------
+INFO 2023-07-11 17:51:02,217 serializers 2797 8074944000 {'name': 'name_after', 'image': <ContentFile: Raw content>, 'text': 'string', 'cooking_time': 2, 'ingredients': [{'id': '3', 'amount': 10}]}
+INFO 2023-07-11 17:51:02,225 test_recipe 2797 8074944000 string_rec
+INFO 2023-07-11 17:51:02,225 test_recipe 2797 8074944000 ----------->
+INFO 2023-07-11 17:51:02,225 test_recipe 2797 8074944000 name_after
+INFO 2023-07-11 17:51:02,829 views 2797 8074944000 <QuerySet []>
