@@ -144,5 +144,6 @@ dmypy.json
 
 # Project specific 
 my_temp_practicum.py
-vscode/
+.vscode/
 local_data_users.txt
+test_requests/
