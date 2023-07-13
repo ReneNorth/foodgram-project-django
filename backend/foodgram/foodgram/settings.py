@@ -191,18 +191,12 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
-        'docker_log': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'formatter': 'verbose',
-            'filename': f'{BASE_DIR}/logs/logs_main.log'
-        },
         'django.server': DEFAULT_LOGGING['handlers']['django.server'],
     },
     'loggers': {
         '': {
             'level': LOGLEVEL,
-            'handlers': ['console', 'docker_log'],
+            'handlers': ['console', ],
         },
         'django.server': DEFAULT_LOGGING['loggers']['django.server'],
     }

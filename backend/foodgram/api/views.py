@@ -114,16 +114,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # def perform_create(self, serializer):
-    #     """
-    #     Performs additional actions after creating a recipe.
-
-    #     Args:
-    #         serializer (Serializer): The serializer
-    #         instance used to create the recipe.
-    #     """
-    #     serializer.save(author=self.request.user)
-
     def partial_update(self, request, *args, **kwargs) -> Response:
         instance = self.get_object()
         serializer = self.get_serializer(

@@ -127,9 +127,6 @@ class RecipeApiTest(TestCase):
             **{"HTTP_AUTHORIZATION": f"Token {token}"},
         )
         recipe = get_object_or_404(Recipe, text='string')
-        log.info(old_name)
-        log.info('----------->')
-        log.info(recipe.name)
         self.assertNotEqual(old_name, recipe.name)
 
         self.assertEqual(

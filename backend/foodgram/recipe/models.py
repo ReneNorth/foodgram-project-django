@@ -41,14 +41,14 @@ class RecipeTag(models.Model):
                             related_name='tags')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return f'{self.tag} for the recipe {self.recipe}'
-
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['tag', 'recipe'],
                                     name='unique tag-recipe pair')
         ]
+
+    def __str__(self):
+        return f'{self.tag} for the recipe {self.recipe}'
 
 
 class RecipeIngredient(models.Model):

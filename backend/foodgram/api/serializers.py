@@ -108,26 +108,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             return instance
 
     def update(self, instance, validated_data):
-        # super().save()
-        # super().validate()
-        # super().
-        # instance.save(ar
-
-        # что нужно вызвать из родительского класса
-        # №, чтобы сохранить хотя бы поля изначальной модели
-        log.info('WORKING HERE')
-        log.info(self)
-        # log.info(len(self))
-        log.info('!------')
-        log.info(instance)
-        log.info('!------')
-        log.info(validated_data)
-
-        # instance.image = validated_data.get('image', instance.image)
-        # instance.name = validated_data.get('name', instance.name)
-        # instance.text = validated_data.get('text', instance.text)
-        # instance.cooking_time = validated_data.get('cooking_time',
-        #                                            instance.cooking_time)
         instance.tags.clear()
         tags = self.initial_data.get('tags')
         instance.tags.set(tags)
@@ -140,7 +120,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                 recipe_id=instance.id,
                 amount=ingredient['amount']))
         RecipeIngredient.objects.bulk_create(batch)
-        # instance.save()
         validated_data.pop('ingredients')
         super().update(instance, validated_data)
         return instance
@@ -151,7 +130,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'ingredients': 'you need at least one ingredient'
                                 'for the recipe'})
-        ingredient_list = set({})
+        ingredient_list = set()
         for ingredient_item in ingredients:
             ingredient = get_object_or_404(Ingredient,
                                            id=ingredient_item['id'])
@@ -213,16 +192,6 @@ class InShoppingCartSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     recipe_in_cart = serializers.SerializerMethodField()
 
-    def get_user(self, obj):
-        if 'user' in self.context:
-            return self.context['user'].id
-        return None
-
-    def get_recipe_in_cart(self, obj):
-        if 'recipe_in_cart' in self.context:
-            return self.context['recipe_in_cart'].id
-        return None
-
     class Meta:
         model = FavoriteRecipe
         fields = ['user', 'recipe_in_cart']
@@ -239,6 +208,16 @@ class InShoppingCartSerializer(serializers.ModelSerializer):
             recipe_in_cart_id=recipe_id)
         recipe_in_cart.save()
         return recipe_in_cart
+
+    def get_user(self, obj):
+        if 'user' in self.context:
+            return self.context['user'].id
+        return None
+
+    def get_recipe_in_cart(self, obj):
+        if 'recipe_in_cart' in self.context:
+            return self.context['recipe_in_cart'].id
+        return None
 
 
 class SubscriptionCreateDeleteSerializer(serializers.ModelSerializer):

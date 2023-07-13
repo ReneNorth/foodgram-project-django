@@ -3,5 +3,5 @@ from subscription.models import Subscription
 
 
 @admin.register(Subscription)
-class Admin(admin.ModelAdmin):
+class SubscriptionAdmin(admin.ModelAdmin):
     pass
