@@ -4,14 +4,73 @@ Foodgram is a final study project of the Practicum 9-month backend developer cou
 
 The website allows users to publish recipes, subscribe to other users' publications, add favorite recipes to the "Favorites" list, and download a consolidated list of ingredients needed for selected dishes before going to the store.
 
-## Stack
+### Tech stack
 
+- React
 - Django
-- Django Rest Framework
-- PostgeSQL
+- Django REST Framework
+- PostgreSQL
 - Docker
-- Nginx
-- Gunicorn
+- nginx
+
+### Installation
+
+Clone the repository.
+Rename dev.env to .env and change the constants to ones
+you need to run the project.
+Install Docker and Docker Compose.
+Run the following command to build the project's Docker containers:
+
+```console
+cd infra/
+docker-compose up --build -d
+```
+
+A successful containers launch is followed by a similar output
+
+```
+[+] Running 5/5
+ ⠿ Network infra_default       Created                                                 0.3s
+ ⠿ Container infra-frontend-1  Started                                                12.7s
+ ⠿ Container infra-db-1        Started                                                12.7s
+ ⠿ Container infra-web-1       Started                                                20.4s
+ ⠿ Container infra-nginx-1     Started
+```
+
+Once the containers are ready, enter the web container's CLI
+
+```console
+docker exec -it infra-web-1 bash
+```
+
+Run the following command to make migrations:
+
+```console
+python manage.py makemigrations
+python manage.py migrate
+```
+
+Run the following command to create a superuser and follow the prompts:
+
+```console
+python manage.py createsuperuser
+```
+
+then execute the commands to collect and move statics
+
+```console
+python manage.py collectstatic
+cp -r /app/collected_static/. /backend_static/static/
+```
+
+Access the application at http://localhost:8000 or http://127.0.0.1:8000
+Use the credentials of the superuser you created in the previous step to access
+http://localhost:8000/admin
+(the specific port is subject to change, so the docs might not reflex the current one)
+
+### API docs
+
+The docs are available at http://localhost:8000/api/redoc
 
 ## Features
 
@@ -25,3 +84,26 @@ Foodgram offers the following main features:
 6.  _(under development)_ **Shopping List**: Authenticated users can add recipes to their shopping list by clicking the "Add to Shopping List" button. They can access the "Shopping List" page, which provides a downloadable file containing a consolidated list of ingredients required for all the recipes saved in the shopping list.
 7.  **Tag Filtering**: Clicking on a tag name displays a list of recipes tagged with that specific tag. Multiple tags can be selected to filter the recipes.
 8.  **User Registration and Authentication**: The project includes a user management system, allowing users to register and authenticate themselves.
+
+## For the Review
+
+### admin:
+
+admin login django: admin
+admin pass django: admin
+admin email: admin@admin.com
+
+### user 1:
+
+email:
+pass
+
+### user 2:
+
+email:
+pass
+
+### user 3:
+
+email:
+pass

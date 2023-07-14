@@ -11,9 +11,8 @@ SECRET_KEY = os.getenv('DJANGO_KEY')
 LOCAL_DEV = False
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'web', '127.0.0.1',
-                 'localhost', '127.0.0.1:8000', '127.0.0.1:9000',
-                 '127.0.0.1:8080']
+ALLOWED_HOSTS = ['134.122.55.144', 'web', '127.0.0.1',
+                 'localhost', 'foodgram.live']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -80,11 +79,13 @@ DJOSER = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
 
+CSRF_TRUSTED_ORIGINS = ['https://foodgram.live',
+                        'http://foodgram.live',
+                        'http://foodgram.live:81', ]
+
 INTERNAL_IPS = [
     '127.0.0.1',
-    '127.0.0.1:8080',
-]
-
+    '127.0.0.1:8080', ]
 
 AUTH_USER_MODEL = "users.User"
 
