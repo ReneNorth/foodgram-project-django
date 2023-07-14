@@ -82,6 +82,7 @@ CORS_URLS_REGEX = r'^/api/.*$'
 
 INTERNAL_IPS = [
     '127.0.0.1',
+    '127.0.0.1:8080',
 ]
 
 
