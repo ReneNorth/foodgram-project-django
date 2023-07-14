@@ -99,21 +99,21 @@ Foodgram offers the following main features:
 ### domain http://foodgram.live:81/
 
 ### admin
-django admin login: admin
-django admin pass : admin
-admin email: admin@admin.com
+django admin login: admin\
+django admin pass : admin\
+admin email: admin@admin.com\
 
 ### user 1
 username: Douglas_n\
-email: Douglas_n@mail.com
-pass: Douglas_n@mail.com
+email: Douglas_n@mail.com\
+pass: Douglas_n@mail.com\
 
 ### user 2
-username: Rene_d
-email: Rene_d@mail.com
-pass: Rene_d@mail.com
+username: Rene_d\
+email: Rene_d@mail.com\
+pass: Rene_d@mail.com\
 
 ### user 3
-username: John_d
-email: anon@mail.com
-pass anon@mail.com
+username: John_d\
+email: anon@mail.com\
+pass anon@mail.com\
