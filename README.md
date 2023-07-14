@@ -104,7 +104,7 @@ django admin pass : admin
 admin email: admin@admin.com
 
 ### user 1
-username: Douglas_n
+username: Douglas_n\
 email: Douglas_n@mail.com
 pass: Douglas_n@mail.com
 
