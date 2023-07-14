@@ -12,7 +12,8 @@ LOCAL_DEV = False
 DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'web', '127.0.0.1',
-                 'localhost', '127.0.0.1:8000', '127.0.0.1:9000']
+                 'localhost', '127.0.0.1:8000', '127.0.0.1:9000',
+                 '127.0.0.1:8080']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
