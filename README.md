@@ -21,9 +21,18 @@ you need to run the project.
 Install Docker and Docker Compose.
 Run the following command to build the project's Docker containers:
 
+To run the project locally:
+
 ```console
 cd infra/
 docker-compose up --build -d
+```
+
+To launch the project on a VM
+
+```console
+cd infra/
+docker-compose -r docker-compose.production up --build -d
 ```
 
 A successful containers launch is followed by a similar output
@@ -50,6 +59,8 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
+Also, in case of running on a VM don't forget to change nginx settings
+
 Run the following command to create a superuser and follow the prompts:
 
 ```console
@@ -63,10 +74,8 @@ python manage.py collectstatic
 cp -r /app/collected_static/. /backend_static/static/
 ```
 
-Access the application at http://localhost:8000 or http://127.0.0.1:8000
-Use the credentials of the superuser you created in the previous step to access
-http://localhost:8000/admin
-(the specific port is subject to change, so the docs might not reflex the current one)
+Access the application at http://localhost:8000 or http://127.0.0.1:8000 or on your domain
+Use the credentials of the superuser you created in the previous step to access django admin site /admin
 
 ### API docs
 
@@ -87,23 +96,28 @@ Foodgram offers the following main features:
 
 ## For the Review
 
-### admin:
+### domain http://foodgram.live:81/
+
+### admin
 
 admin login django: admin
 admin pass django: admin
 admin email: admin@admin.com
 
-### user 1:
+### user 1
 
-email:
-pass
+username: Douglas_n
+email: Douglas_n@mail.com
+pass: Douglas_n@mail.com
 
-### user 2:
+### user 2
 
-email:
-pass
+username: Rene_d
+email: Rene_d@mail.com
+pass: Rene_d@mail.com
 
-### user 3:
+### user 3
 
-email:
-pass
+username: John_d
+email: anon@mail.com
+pass anon@mail.com
