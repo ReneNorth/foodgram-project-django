@@ -30,7 +30,7 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(Tag, through='RecipeTag')
     ingredients = models.ManyToManyField(
         Ingredient, through='RecipeIngredient')
-    pub_date = models.DateField(auto_now_add=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f'id {self.id}: {self.name[:10]}'
