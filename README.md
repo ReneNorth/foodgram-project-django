@@ -96,7 +96,7 @@ Foodgram offers the following main features:
 
 ## For the Review
 
-### domain http://foodgram.live/
+### domain https://foodgram.live/
 
 ### admin
 
