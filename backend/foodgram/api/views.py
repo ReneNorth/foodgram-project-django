@@ -87,7 +87,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     permission_classes = [IsAuthorOrReadOnly, ]
-    ordering_fields = ['pub_date']
+    ordering_fields = ['-pub_date']
 
     def get_serializer_context(self):
         return {'user': self.request.user}
