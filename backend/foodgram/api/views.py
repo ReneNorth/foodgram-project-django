@@ -12,6 +12,7 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import filters
 from shopping_cart.models import InShoppingCart
 from subscription.models import Subscription
 from tags.models import Tag
@@ -84,10 +85,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = CustomPagination
-    filter_backends = (DjangoFilterBackend, )
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filterset_class = RecipeFilter
     permission_classes = [IsAuthorOrReadOnly, ]
-    ordering_fields = ['-pub_date']
+    ordering = ['-pub_date']
 
     def get_serializer_context(self):
         return {'user': self.request.user}

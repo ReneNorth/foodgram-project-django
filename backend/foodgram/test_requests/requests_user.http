@@ -45,8 +45,9 @@
 # Authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
 
 # POST http://127.0.0.1:8000/api/recipes/ HTTP/1.1
-# content-type: application/json
-# authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
+GET http://127.0.0.1:8000/api/recipes/ HTTP/1.1
+content-type: application/json
+authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
 
 # {
 #   "ingredients": [
@@ -54,7 +55,7 @@
 #   ],
 #   "tags": [1, 2],
 #   "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
-#   "name": "string_rec",
+#   "name": "LAST",
 #   "text": "string",
 #   "cooking_time": 1
 # }
@@ -63,9 +64,9 @@
 
 # GET http://127.0.0.1:8000/api/recipes/download_shopping_cart/ HTTP/1.1
 # GET  http://127.0.0.1:8000/api/recipes/82/ HTTP/1.1
-GET  http://127.0.0.1:8000/api/users/ HTTP/1.1
-content-type: application/json
-authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
+# GET  http://127.0.0.1:8000/api/users/ HTTP/1.1
+# content-type: application/json
+# authorization: token 0f7f4692b1998b10ac2a66116a53380f761eac64
 
 # {
 #   "ingredients": [
