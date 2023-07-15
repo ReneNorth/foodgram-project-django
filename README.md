@@ -102,22 +102,22 @@ Foodgram offers the following main features:
 
 admin login django: admin\
 admin pass django: admin\
-admin email: admin@admin.com\
+admin email: admin@admin.com
 
 ### user 1
 
 username: Douglas_n\
 email: Douglas_n@mail.com\
-pass: Douglas_n@mail.com\
+pass: Douglas_n@mail.com
 
 ### user 2
 
 username: Rene_d\
 email: Rene_d@mail.com\
-pass: Rene_d@mail.com\
+pass: Rene_d@mail.com
 
 ### user 3
 
 username: John_d\
 email: anon@mail.com\
-pass anon@mail.com\
+pass anon@mail.com
