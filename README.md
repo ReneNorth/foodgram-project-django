@@ -93,31 +93,3 @@ Foodgram offers the following main features:
 6.  _(under development)_ **Shopping List**: Authenticated users can add recipes to their shopping list by clicking the "Add to Shopping List" button. They can access the "Shopping List" page, which provides a downloadable file containing a consolidated list of ingredients required for all the recipes saved in the shopping list.
 7.  **Tag Filtering**: Clicking on a tag name displays a list of recipes tagged with that specific tag. Multiple tags can be selected to filter the recipes.
 8.  **User Registration and Authentication**: The project includes a user management system, allowing users to register and authenticate themselves.
-
-## For the Review
-
-### domain https://foodgram.live/
-
-### admin
-
-admin login django: admin\
-admin pass django: admin\
-admin email: admin@admin.com
-
-### user 1
-
-username: Douglas_n\
-email: Douglas_n@mail.com\
-pass: Douglas_n@mail.com
-
-### user 2
-
-username: Rene_d\
-email: Rene_d@mail.com\
-pass: Rene_d@mail.com
-
-### user 3
-
-username: John_d\
-email: anon@mail.com\
-pass anon@mail.com
